@@ -10,20 +10,16 @@
 namespace Chess {
     class Spot {
     public:
-        Spot(const int &x, const int &y, Piece *piece = nullptr, const int &size = 50);
-        ~Spot() { delete piece; };
+        Spot(Piece *piece = nullptr, const int &size = 50);
+        ~Spot() = default;
 
         void setPiece(Piece *piece);
 
         [[nodiscard]] Piece *getPiece() const;
-        [[nodiscard]] int getX() const;
-        [[nodiscard]] int getY() const;
 
     private:
         Piece *piece;
         const int size;
-        const int x;
-        const int y;
     };
 }
 
