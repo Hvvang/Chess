@@ -18,10 +18,10 @@ namespace Chess {
             if ((side && nextRow > 3) || (!side && nextRow < 4)) {
                 if (abs(nextRow - currRow) == 1)
                     return 1;
-                else return false;
+                else return 0;
             } else if ((side && nextRow < 4) || (!side && nextRow > 3)) {
                 return abs(nextRow - currRow);
-            }
+            } else return 0;
         } else return 0;
     }
 
