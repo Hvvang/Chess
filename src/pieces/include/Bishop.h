@@ -10,7 +10,9 @@
 namespace Chess {
     class Bishop : public Piece {
     public:
-        Bishop(const bool &side) : Piece(side) {};
+        Bishop(const bool &side, std::pair<int, int> pos);
+
+        bool moveStrategy(std::pair<int, int> nextPos) override;
     };
 }
 

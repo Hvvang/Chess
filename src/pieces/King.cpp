@@ -3,3 +3,12 @@
 //
 
 #include "King.h"
+
+namespace Chess {
+    King::King(const bool &side, std::pair<int, int> pos)
+            : Piece(side, pos) {}
+
+    bool King::moveStrategy(std::pair<int, int> nextPos) {
+
+    }
+}
