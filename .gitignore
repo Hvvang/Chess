@@ -31,6 +31,9 @@
 *.out
 *.app
 
+# IDE
+.idea
 
 # Build_dir
 cmake-build-debug
+build
