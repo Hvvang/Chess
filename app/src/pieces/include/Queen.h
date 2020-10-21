@@ -8,12 +8,14 @@
 #include "Piece.h"
 
 namespace Chess {
-    class Queen : public Piece {
-    public:
-        Queen(const bool &side, std::pair<int, int> pos);
+class Queen : public Piece {
+public:
+    Queen(const bool &side, const Position &pos);
 
-        bool moveStrategy(std::pair<int, int> nextPos) override;
-    };
+private:
+    Position getDirection(const Position &currPos, const Position &nextPos) override;
+    bool moveStrategy(const Position &nextPos, const Board *board) override;
+};
 }
 
 

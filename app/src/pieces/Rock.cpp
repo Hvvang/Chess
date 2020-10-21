@@ -6,17 +6,17 @@
 
 
 namespace Chess {
-    Rock::Rock(const bool &side, std::pair<int, int> pos)
+    Rock::Rock(const bool &side, const Position &pos)
         : Piece(side, pos) {}
 
-    bool Rock::moveStrategy(std::pair<int, int> nextPos) {
-        auto currPos = getPosition();
-
-        if ((currPos.first - nextPos.first) * (currPos.second - nextPos.second))
-            return false;
-        else
-            return true;
-    }
+//    bool Rock::moveStrategy(std::pair<int, int> nextPos) {
+//        auto currPos = getPosition();
+//
+//        if ((currPos.first - nextPos.first) * (currPos.second - nextPos.second))
+//            return false;
+//        else
+//            return true;
+//    }
 }
 
 

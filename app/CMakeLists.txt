@@ -10,8 +10,11 @@ include_directories(
         src/pieces/include
 )
 
+configure_file(res/board.png ${CMAKE_CURRENT_BINARY_DIR}/board.png COPYONLY)
+configure_file(res/figures.png ${CMAKE_CURRENT_BINARY_DIR}/figures.png COPYONLY)
+
 add_executable(chess ${SOURCE_EXE})
 
 add_subdirectory(src)
-target_link_libraries(chess sfml-graphics sfml-window sfml-system)
+target_link_libraries(chess sfml-graphics sfml-window)
 target_link_libraries(chess SRC_LIB)

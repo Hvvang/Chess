@@ -8,6 +8,8 @@
 #include "Piece.h"
 
 namespace Chess {
+    class Piece;
+
     class Spot {
     public:
         Spot(Piece *piece = nullptr, const int &size = 50);

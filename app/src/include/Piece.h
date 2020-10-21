@@ -6,30 +6,41 @@
 #define CHESS_PIECE_H
 
 #include <utility>
+#include "Board.h"
 
 namespace Chess {
-    #define BLACK 0
-    #define WHITE 1
+#define BLACK 0
+#define WHITE 1
+using Position = std::pair<int, int>;
 
-    class Piece {
-    public:
-        Piece(const bool &side = WHITE, std::pair<int, int> pos = {0, 0});
-        ~Piece() = default;
+Position operator+(const Position &left, const Position &right) {
+    return {left.first + right.first, left.second + right.second};
+}
 
-        [[nodiscard]] int getSide() const;
-        [[nodiscard]] bool isKilled() const;
-        [[nodiscard]] std::pair<int, int> getPosition() const;
+class Board;
+class Piece {
+public:
+    Piece(const bool &side = WHITE, Position pos = {0, 0});
+    ~Piece() = default;
 
-        void setDeath(const bool &death = true);
-        void setPosition(std::pair<int, int> pos);
-        virtual bool moveStrategy(std::pair<int, int> nextPos) = 0;
+    [[nodiscard]] int getSide() const;
+    [[nodiscard]] bool isKilled() const;
+    [[nodiscard]] Position getPosition() const;
 
-    private:
-        int x;
-        int y;
-        const bool side;
-        bool death = false;
-    };
+    void setDeath(const bool &death = true);
+    void setPosition(Position pos);
+    bool canMove(Position nextPos, Board *board);
+
+private:
+    virtual Position getDirection(const Position &currPos, const Position &nextPos) = 0;
+    virtual bool moveStrategy(const Position &nextPos, const Board *board) = 0;
+
+private:
+    Position pos;
+    const bool side;
+    bool death = false;
+};
+
 }
 
 #endif //CHESS_PIECE_H

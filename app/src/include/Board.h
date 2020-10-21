@@ -10,7 +10,7 @@
 #include <memory>
 
 namespace Chess {
-
+class Spot;
 #define BOARD_COLS 8
 #define BOARD_ROWS 8
 
@@ -20,12 +20,12 @@ namespace Chess {
     class Board {
     public:
         Board();
-
         ~Board() = default;
 
         void initBoard();
-
         void update();
+
+        [[nodiscard]] const Field<std::unique_ptr<Spot>> &getBoard() const;
 
     private:
         Field<std::unique_ptr<Spot>> board;

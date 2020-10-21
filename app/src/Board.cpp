@@ -54,4 +54,8 @@ namespace Chess {
 
     }
 
+    const Field<std::unique_ptr<Spot>> &Board::getBoard() const {
+        return this->board;
+    }
+
 }

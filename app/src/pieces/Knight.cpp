@@ -6,15 +6,25 @@
 #include "Knight.h"
 
 namespace Chess {
-    Knight::Knight(const bool &side, std::pair<int, int> pos)
+    Knight::Knight(const bool &side, const Position &pos)
             : Piece(side, pos) {}
 
-    bool Knight::moveStrategy(std::pair<int, int> nextPos) {
+    bool Knight::moveStrategy(const Position &nextPos, const Board *board) {
         auto currPos = getPosition();
+        auto deltaX = nextPos.first - currPos.first;
+        auto deltaY = nextPos.second - currPos.second;
 
-        if ((abs(nextPos.first - currPos.first) == 2 && abs(nextPos.second - currPos.second) == 1)
-            || (abs(nextPos.first - currPos.first) == 1 && abs(nextPos.second - currPos.second) == 2)) {
-            return true;
-        } else return false;
+        if (abs(deltaX) * abs(deltaY) == 2) {
+            const auto &piece = board->getBoard()[nextPos.first][nextPos.second]->getPiece();
+
+            if (piece != nullptr) {
+                if (this->getSide() != piece->getSide())
+                    return true;
+                else return false;
+            } else {
+                return true;
+            }
+        }
+        return false;
     }
 }

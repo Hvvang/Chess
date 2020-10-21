@@ -5,17 +5,16 @@
 #include "Piece.h"
 
 namespace Chess {
-    Piece::Piece(const bool &side, std::pair<int, int> pos)
+    Piece::Piece(const bool &side, Position pos)
             : side(side)
-            , x(pos.first)
-            , y(pos.second) {};
+            , pos(pos) {};
 
     int Piece::getSide() const {
         return side;
     };
 
-    std::pair<int, int> Piece::getPosition() const {
-        return {x, y};
+    Position Piece::getPosition() const {
+        return pos;
     }
 
     bool Piece::isKilled() const {
@@ -26,8 +25,14 @@ namespace Chess {
         this->death = death;
     }
 
-    void Piece::setPosition(std::pair<int, int> pos) {
-        this->x = pos.first;
-        this->y = pos.second;
+    void Piece::setPosition(Position pos) {
+        this->pos = pos;
+    }
+
+    bool Piece::canMove(Position nextPos, Board *board) {
+        if (Piece::moveStrategy(nextPos, board)) {
+            return true;
+        }
+        return false;
     }
 }
