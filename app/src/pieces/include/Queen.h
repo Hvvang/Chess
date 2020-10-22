@@ -10,7 +10,7 @@
 namespace Chess {
 class Queen final : public Piece {
 public:
-    Queen(const bool &side, const Position &pos);
+    Queen(const ChessSide &side, const Position &pos);
 
 private:
     bool moveStrategy(const Position &nextPos, const Board *board) override;

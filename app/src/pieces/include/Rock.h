@@ -1,5 +1,5 @@
 //
-// Created by Artem Shemidko on 20.10.2020.
+// Created by Artem Shemidko on 22.10.2020.
 //
 
 #ifndef CHESS_ROCK_H
@@ -8,9 +8,10 @@
 #include "Piece.h"
 
 namespace Chess {
-class Rock final : public Piece {
+class Rock : public Piece {
 public:
-    Rock(const bool &side, const Position &pos);
+    Rock(const ChessSide &side, const Position &pos);
+    ~Rock() = default;
 
 private:
     bool moveStrategy(const Position &nextPos, const Board *board) override;

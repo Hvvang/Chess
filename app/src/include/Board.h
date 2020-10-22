@@ -5,30 +5,33 @@
 #ifndef CHESS_BOARD_H
 #define CHESS_BOARD_H
 
-#include "Spot.h"
+#include "Piece.h"
 #include <array>
 #include <memory>
 
 namespace Chess {
-class Spot;
 #define BOARD_COLS 8
 #define BOARD_ROWS 8
-
     template<class T>
     using Field = std::array<std::array<T, BOARD_COLS>, BOARD_ROWS>;
 
+    using Position = std::pair<int, int>;
+
+    class Piece;
     class Board final {
     public:
         Board();
         ~Board() = default;
 
         void initBoard();
-        void update();
+        void reset();
 
-        [[nodiscard]] const Field<std::unique_ptr<Spot>> &getBoard() const;
+        Piece *getSpot(const Position &pos) const;
+
+        [[nodiscard]] Field<std::unique_ptr<Piece>> &getBoard();
 
     private:
-        Field<std::unique_ptr<Spot>> board;
+        Field<std::unique_ptr<Piece>> board;
 
         const int size = 400;
     };

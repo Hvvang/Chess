@@ -5,10 +5,11 @@
 #ifndef CHESS_GAME_H
 #define CHESS_GAME_H
 
+namespace Chess {
+    class Game {
 
-class Game {
-
-};
+    };
+}
 
 
 #endif //CHESS_GAME_H

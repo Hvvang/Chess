@@ -1,12 +1,12 @@
 //
-// Created by Artem Shemidko on 20.10.2020.
+// Created by Artem Shemidko on 22.10.2020.
 //
 
 #include "Rock.h"
 
-
 namespace Chess {
-    Rock::Rock(const bool &side, const Position &pos)
+
+    Rock::Rock(const ChessSide &side, const Position &pos)
         : Piece(side, pos) {}
 
     bool Rock::moveStrategy(const Position &nextPos, const Board *board) {
@@ -19,5 +19,3 @@ namespace Chess {
         } else return false;
     }
 }
-
-

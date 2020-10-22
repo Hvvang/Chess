@@ -1,6 +1,10 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
+//#include "Board.h"
+#include "Move.h"
+
+
 int map[8][8] = {
         -5, -4, -3, -2, -1, -3, -4, -5,
         -6, -6, -6, -6, -6, -6, -6, -6,
@@ -12,9 +16,13 @@ int map[8][8] = {
         5, 4, 3, 2, 1, 3, 4, 5,
 };
 int size = 133;
-
+using  namespace Chess;
 int main() {
     // create the window
+    Board *BOARD = new Board();
+    Move *MOVE = new Move(BOARD);
+
+
     sf::RenderWindow window(sf::VideoMode(1600, 1000), "Chess");
     sf::Sprite sprites[32];
 
@@ -40,20 +48,13 @@ int main() {
             k++;
         }
     }
-//    sf::Texture texture;
-//    if (!texture.loadFromFile("./wp.png"))
-//    {
-//        return 0;
-//        // error...
-//    }
-//    texture.setSmooth(true);
-//    sf::Sprite sprite;
-//    sprite.setTexture(texture);
+
     sf::Sprite s_board;
     s_board.setTexture(board);
 
     bool isTook = false;
-
+    int n = 0;
+    Position pos = {0, 0};
     // run the program as long as the window is open
     while (window.isOpen())
     {
@@ -66,18 +67,29 @@ int main() {
             if (event.type == sf::Event::Closed)
                 window.close();
             if (event.type == sf::Event::MouseButtonPressed) {
-                if (!isTook) {
-//                    if (sprite.getGlobalBounds().contains(mousePos.x, mousePos.y))
-//                        isTook = !isTook;
-                } else {
-//                    auto currPos = sprite.getPosition() + sf::Vector2f(50, 50);
-//                    sf::Vector2f newPos = sf::Vector2f(100 * int(currPos.x / 100), 100 * int(currPos.y / 100));
-//                    sprite.setPosition(newPos.x, newPos.y);
-//                    isTook = !isTook;
+                for (int i = 0; i < 32; ++i) {
+                    if (!isTook) {
+                        if (sprites[i].getGlobalBounds().contains(mousePos.x, mousePos.y)) {
+                            isTook = !isTook;
+                            pos = {int(sprites[i].getPosition().y / 100), int(sprites[i].getPosition().x / 100)};
+                            n = i;
+                            break;
+                        }
+                    } else {
+                        auto currPos = sprites[n].getPosition() + sf::Vector2f(50, 50);
+                        sf::Vector2f newPos = sf::Vector2f(100 * int(currPos.x / 100), 100 * int(currPos.y / 100));
+                        sprites[n].setPosition(newPos.x, newPos.y);
+                        Position npos = {int(newPos.y / 100), int(newPos.x / 100)};
+                        MOVE->changePosition(pos, npos);
+                        isTook = !isTook;
+                        break;
+
+                    }
                 }
             }
             if (event.type == sf::Event::MouseMoved && isTook) {
-//                sprite.setPosition(event.mouseMove.x - 50, event.mouseMove.y - 50);
+                sprites[n].setPosition(event.mouseMove.x - 50, event.mouseMove.y - 50);
+
             }
         }
 

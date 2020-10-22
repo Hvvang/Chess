@@ -6,7 +6,7 @@
 #include "Bishop.h"
 
 namespace Chess {
-    Bishop::Bishop(const bool &side, const Position &pos)
+    Bishop::Bishop(const ChessSide &side, const Position &pos)
             : Piece(side, pos) {}
 
     bool Bishop::moveStrategy(const Position &nextPos, const Board *board) {

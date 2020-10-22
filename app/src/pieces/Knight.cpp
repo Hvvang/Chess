@@ -4,9 +4,9 @@
 
 #include <cmath>
 #include "Knight.h"
-
+#include <iostream>
 namespace Chess {
-    Knight::Knight(const bool &side, const Position &pos)
+    Knight::Knight(const ChessSide &side, const Position &pos)
             : Piece(side, pos) {}
 
     bool Knight::moveStrategy(const Position &nextPos, const Board *board) {
@@ -21,7 +21,7 @@ namespace Chess {
     }
 
     bool Knight::checkCollision(const Position &currPos, const Position &nextPos, const Board *board) {
-        const auto &piece = board->getBoard()[nextPos.first][nextPos.second]->getPiece();
+        const auto &piece = board->getSpot(nextPos);
 
         if (piece != nullptr) {
             if (this->getSide() != piece->getSide())

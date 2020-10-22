@@ -6,7 +6,7 @@
 #include "Queen.h"
 
 namespace Chess {
-    Queen::Queen(const bool &side, const Position &pos)
+    Queen::Queen(const ChessSide &side, const Position &pos)
             : Piece(side, pos) {}
 
     bool Queen::moveStrategy(const Position &nextPos, const Board *board) {

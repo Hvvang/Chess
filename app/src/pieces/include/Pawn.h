@@ -10,9 +10,11 @@
 namespace Chess {
 class Pawn final : public Piece {
 public:
-    Pawn(const bool &side, const Position &pos);
+    Pawn(const ChessSide &side, const Position &pos);
+
 
 private:
+    bool checkCollision(const Position &currPos, const Position &nextPos, const Board *board) override;
     bool moveStrategy(const Position &nextPos, const Board *board) override;
 };
 }

@@ -10,29 +10,19 @@
 #include "Player.h"
 
 namespace Chess {
-enum class MoveDirections {
-    ForwardMove,
-    BackwardMove,
-    RightMove,
-    LeftMove,
-    DiagonalMove,
-    AnotherMove, // knight
-    NotValidStratege
-};
+    class Move {
+    public:
+        Move(Board *board);
+        ~Move() = default;
+
+        void changePosition(const Position &currPos, const Position &nextPos);
+
+    private:
 
 
-class Move {
-    Move(Board *board);
-
-
-    bool isValidMove(Piece *piece, Position nextPos);
-
-private:
-
-
-private:
-    static Board *board;
-};
+    private:
+        Board *board;
+    };
 }
 
 

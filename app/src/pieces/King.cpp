@@ -6,7 +6,7 @@
 #include "King.h"
 
 namespace Chess {
-    King::King(const bool &side, const Position &pos)
+    King::King(const ChessSide &side, const Position &pos)
             : Piece(side, pos) {}
 
     bool King::moveStrategy(const Position &nextPos, const Board *board) {

@@ -5,19 +5,23 @@
 #include "Piece.h"
 
 namespace Chess {
-    Piece::Piece(const bool &side, Position pos)
+    Position operator+(const Position &left, const Position &right) {
+        return {left.first + right.first, left.second + right.second};
+    }
+
+    Piece::Piece(const ChessSide &side, const Position &pos)
             : side(side)
             , pos(pos) {};
 
-    int Piece::getSide() const {
+    const ChessSide &Piece::getSide() const {
         return side;
     };
 
-    Position Piece::getPosition() const {
+    const Position &Piece::getPosition() const {
         return pos;
     }
 
-    bool Piece::isKilled() const {
+    const bool &Piece::isKilled() const {
         return death;
     };
 
@@ -30,35 +34,38 @@ namespace Chess {
     }
 
     bool Piece::canMove(Position nextPos, Board *board) {
-        if (Piece::moveStrategy(nextPos, board)) {
+        if (moveStrategy(nextPos, board)) {
+            std::cout << "piw" << std::endl;
             return true;
         }
+        std::cout << "paf" << std::endl;
         return false;
     }
 
     Position Piece::getDirection(const int &deltaX, const int &deltaY) {
         if (deltaX && deltaY) {
-            return { deltaX / abs(deltaX), deltaY / abs(deltaY) };
+            return { deltaY / abs(deltaY), deltaX / abs(deltaX) };
         }
         else {
-            if (!deltaX) {
-                return { 0, deltaY / abs(deltaY) };
+            if (!deltaY) {
+                return { 0, deltaX / abs(deltaX) };
             } else {
-                return { deltaX / abs(deltaX), 0 };
+                return { deltaY / abs(deltaY), 0 };
             }
         }
     }
 
     bool Piece::checkCollision(const Position &currPos, const Position &nextPos, const Board *board) {
-        auto deltaX = nextPos.first - currPos.first;
-        auto deltaY = nextPos.second - currPos.second;
+        auto deltaY = nextPos.first - currPos.first;
+        auto deltaX = nextPos.second - currPos.second;
         const auto &direction = getDirection(deltaX, deltaY);
         Position temp = currPos;
 
         do {
             temp = temp + direction;
-            const auto &piece = board->getBoard()[temp.first][temp.second]->getPiece();
+            const auto &piece = board->getSpot(temp);
 
+            std::cout << "TEPM: " << temp.first << " " << temp.second << std::endl;
             if (piece != nullptr) {
                 if (temp != nextPos)
                     return false;
@@ -67,6 +74,10 @@ namespace Chess {
                 else return true;
             }
         } while (temp != nextPos);
+        return true;
     }
 
+    bool Piece::moveStrategy(const Position &nextPos, const Board *board) {
+        return false;
+    }
 }
