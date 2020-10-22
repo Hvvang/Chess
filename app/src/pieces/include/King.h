@@ -8,12 +8,11 @@
 #include "Piece.h"
 
 namespace Chess {
-class King : public Piece {
+class King final : public Piece {
 public:
     King(const bool &side, const Position &pos);
 
 private:
-    Position getDirection(const Position &currPos, const Position &nextPos) override;
     bool moveStrategy(const Position &nextPos, const Board *board) override;
 };
 }

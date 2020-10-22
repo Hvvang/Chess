@@ -29,10 +29,14 @@ public:
 
     void setDeath(const bool &death = true);
     void setPosition(Position pos);
+
     bool canMove(Position nextPos, Board *board);
 
+protected:
+    virtual bool checkCollision(const Position &currPos, const Position &nextPos, const Board *board);
+
 private:
-    virtual Position getDirection(const Position &currPos, const Position &nextPos) = 0;
+    Position getDirection(const int &deltaX, const int &deltaY);
     virtual bool moveStrategy(const Position &nextPos, const Board *board) = 0;
 
 private:

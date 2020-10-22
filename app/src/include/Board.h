@@ -17,7 +17,7 @@ class Spot;
     template<class T>
     using Field = std::array<std::array<T, BOARD_COLS>, BOARD_ROWS>;
 
-    class Board {
+    class Board final {
     public:
         Board();
         ~Board() = default;

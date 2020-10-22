@@ -8,7 +8,7 @@
 #include "Piece.h"
 
 namespace Chess {
-    class Piece;
+class Piece;
 
     class Spot {
     public:
