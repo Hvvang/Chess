@@ -3,7 +3,8 @@
 
 //#include "Board.h"
 #include "Move.h"
-
+#include "Game.h"
+#include "Piece.h"
 
 int map[8][8] = {
         -5, -4, -3, -2, -1, -3, -4, -5,
@@ -15,14 +16,21 @@ int map[8][8] = {
         6, 6, 6, 6, 6, 6, 6, 6,
         5, 4, 3, 2, 1, 3, 4, 5,
 };
+
+
 int size = 133;
 using  namespace Chess;
+int spotSize = 100;
+
+Position translateCords(const sf::Vector2f &pos) {
+    return {int(pos.y / spotSize), int(pos.x / spotSize)};
+}
+
 int main() {
     // create the window
-    Board *BOARD = new Board();
-    Move *MOVE = new Move(BOARD);
-
-
+//    Game *game = new Game({std::make_unique<Player>(Player(ChessSide::WHITE, "Player1")),
+//                           std::make_unique<Player>(Player(ChessSide::BLACK, "Player2"))});
+    Game *game = new Game({Player(ChessSide::WHITE), Player(ChessSide::BLACK)});
     sf::RenderWindow window(sf::VideoMode(1600, 1000), "Chess");
     sf::Sprite sprites[32];
 
@@ -70,20 +78,25 @@ int main() {
                 for (int i = 0; i < 32; ++i) {
                     if (!isTook) {
                         if (sprites[i].getGlobalBounds().contains(mousePos.x, mousePos.y)) {
-                            isTook = !isTook;
-                            pos = {int(sprites[i].getPosition().y / 100), int(sprites[i].getPosition().x / 100)};
-                            n = i;
+                            std::cout << "1\n";
+                            pos = translateCords(sprites[i].getPosition());
+                            std::cout << "2\n";
+                            if (game->isCurrTurn(pos)) {
+                                isTook = !isTook;
+                                n = i;
+                            }
+                            std::cout << "3\n";
                             break;
                         }
                     } else {
                         auto currPos = sprites[n].getPosition() + sf::Vector2f(50, 50);
                         sf::Vector2f newPos = sf::Vector2f(100 * int(currPos.x / 100), 100 * int(currPos.y / 100));
-                        sprites[n].setPosition(newPos.x, newPos.y);
-                        Position npos = {int(newPos.y / 100), int(newPos.x / 100)};
-                        MOVE->changePosition(pos, npos);
-                        isTook = !isTook;
+                        if (game->getMove()->getMoveStatus(pos, translateCords(newPos)) != MoveStatus::NotValid) {
+                            sprites[n].setPosition(newPos.x, newPos.y);
+                            isTook = !isTook;
+                        }
+                        std::cout << "not Valid\n";
                         break;
-
                     }
                 }
             }

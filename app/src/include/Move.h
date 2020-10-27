@@ -15,12 +15,12 @@ namespace Chess {
         Move(Board *board);
         ~Move() = default;
 
+        MoveStatus getMoveStatus(const Position &currPos, const Position &nextPos);
+
         void changePosition(const Position &currPos, const Position &nextPos);
 
     private:
 
-
-    private:
         Board *board;
     };
 }

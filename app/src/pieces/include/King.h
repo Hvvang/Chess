@@ -10,10 +10,10 @@
 namespace Chess {
 class King final : public Piece {
 public:
-    King(const ChessSide &side, const Position &pos);
+    King(const ChessSide &side);
 
 private:
-    bool moveStrategy(const Position &nextPos, const Board *board) override;
+    MoveStatus moveStrategy(const Position &currPos, const Position &nextPos, const Board *board) override;
 };
 }
 

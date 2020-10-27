@@ -5,8 +5,35 @@
 #ifndef CHESS_GAME_H
 #define CHESS_GAME_H
 
+#include <utility>
+#include "Player.h"
+#include "Move.h"
+
 namespace Chess {
+    using Players = std::pair<Player, Player>;
+
     class Game {
+    public:
+        Game(Players players);
+        ~Game() = default;
+
+        [[nodiscard]] const Players &getPlayers() const;
+        [[nodiscard]] Board *getBoard() const;
+        [[nodiscard]] const ChessSide &getCurrTurn() const;
+        [[nodiscard]] Move *getMove() const;
+
+        void setCurrTurn(const ChessSide &currTurn);
+        void setBoard(Board *board);
+        void run();
+        const bool &isCurrTurn(const Position &pos);
+
+    private:
+
+    private:
+        Players players;
+        ChessSide currTurn;
+        Board *board;
+        Move *move;
 
     };
 }

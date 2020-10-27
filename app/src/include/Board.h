@@ -5,7 +5,7 @@
 #ifndef CHESS_BOARD_H
 #define CHESS_BOARD_H
 
-#include "Piece.h"
+#include "Spot.h"
 #include <array>
 #include <memory>
 
@@ -18,6 +18,7 @@ namespace Chess {
     using Position = std::pair<int, int>;
 
     class Piece;
+    class Spot;
     class Board final {
     public:
         Board();
@@ -26,14 +27,11 @@ namespace Chess {
         void initBoard();
         void reset();
 
-        Piece *getSpot(const Position &pos) const;
-
-        [[nodiscard]] Field<std::unique_ptr<Piece>> &getBoard();
+        [[nodiscard]] Spot *getSpot(const Position &pos) const;
+        [[nodiscard]] Field<std::unique_ptr<Spot>> &getBoard();
 
     private:
-        Field<std::unique_ptr<Piece>> board;
-
-        const int size = 400;
+        Field<std::unique_ptr<Spot>> board;
     };
 
 }

@@ -6,29 +6,30 @@
 #include "Knight.h"
 #include <iostream>
 namespace Chess {
-    Knight::Knight(const ChessSide &side, const Position &pos)
-            : Piece(side, pos) {}
+    Knight::Knight(const ChessSide &side)
+            : Piece(side) {}
 
-    bool Knight::moveStrategy(const Position &nextPos, const Board *board) {
-        auto currPos = getPosition();
+    MoveStatus Knight::moveStrategy(const Position &currPos, const Position &nextPos, const Board *board) {
         auto deltaX = nextPos.first - currPos.first;
         auto deltaY = nextPos.second - currPos.second;
 
         if (abs(deltaX) * abs(deltaY) == 2) {
             return checkCollision(currPos, nextPos, board);
         }
-        return false;
+        return MoveStatus::NotValid;
     }
 
-    bool Knight::checkCollision(const Position &currPos, const Position &nextPos, const Board *board) {
-        const auto &piece = board->getSpot(nextPos);
+    MoveStatus Knight::checkCollision(const Position &currPos, const Position &nextPos, const Board *board) {
+        const auto &piece = board->getSpot(nextPos)->getPiece();
 
+        std::cout << "currPos = " << currPos.first << " " << currPos.second << std::endl;
+        std::cout << "nextPos = " << nextPos.first << " " << nextPos.second << std::endl;
         if (piece != nullptr) {
             if (this->getSide() != piece->getSide())
-                return true;
-            else return false;
+                return MoveStatus::KillMove;
+            else return MoveStatus::NotValid;
         } else {
-            return true;
+            return MoveStatus::Default;
         }
     }
 }

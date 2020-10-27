@@ -7,45 +7,48 @@
 
 #include <utility>
 #include "Board.h"
-
 #include <iostream>
-
+#include "Spot.h"
 
 namespace Chess {
     using Position = std::pair<int, int>;
 
-enum class ChessSide {
-    WHITE,
-    BLACK
-};
-class Board;
-class Piece {
-public:
-    Piece(const ChessSide &side = ChessSide::WHITE, const Position &pos = {0, 0});
-    ~Piece() = default;
+    enum class ChessSide {
+        WHITE,
+        BLACK
+    };
 
-    [[nodiscard]] const ChessSide &getSide() const;
-    [[nodiscard]] const bool &isKilled() const;
-    [[nodiscard]] const Position &getPosition() const;
+    enum class MoveStatus {
+        Default,
+        Castle,
+        PawnPromotion,
+        KillMove,
+        NotValid
+    };
 
-    void setDeath(const bool &death = true);
-    void setPosition(Position pos);
+    class Board;
+    class Piece {
+    public:
+        Piece(const ChessSide &side = ChessSide::WHITE);
 
-    virtual bool canMove(Position nextPos, Board *board);
+        [[nodiscard]] const ChessSide &getSide() const;
+        [[nodiscard]] const bool &isKilled() const;
 
-protected:
-    virtual bool checkCollision(const Position &currPos, const Position &nextPos, const Board *board);
+        void setDeath(const bool &death = true);
 
-private:
-    Position getDirection(const int &deltaX, const int &deltaY);
-    virtual bool moveStrategy(const Position &nextPos, const Board *board);
+        virtual MoveStatus canMove(const Position &currPos, const Position &nextPos, Board *board);
 
-private:
-    Position pos;
-    const ChessSide side;
-    bool death = false;
-};
+    protected:
+        virtual MoveStatus checkCollision(const Position &currPos, const Position &nextPos, const Board *board);
 
+    private:
+        Position getDirection(const int &deltaX, const int &deltaY);
+        virtual MoveStatus moveStrategy(const Position &currPos, const Position &nextPos, const Board *board) = 0;
+
+    private:
+        const ChessSide side;
+        bool death = false;
+    };
 }
 
 #endif //CHESS_PIECE_H

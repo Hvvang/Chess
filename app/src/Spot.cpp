@@ -1,0 +1,21 @@
+//
+// Created by Artem Shemidko on 27.10.2020.
+//
+
+#include "Spot.h"
+
+namespace Chess {
+    Spot::Spot(const Position &pos, Piece *piece)
+        : pos(pos)
+        , piece(piece) {
+
+    }
+
+    const Position &Spot::getPos() const {
+        return pos;
+    }
+
+    Piece *Spot::getPiece() const {
+        return piece;
+    }
+}

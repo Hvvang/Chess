@@ -6,16 +6,15 @@
 #include "Bishop.h"
 
 namespace Chess {
-    Bishop::Bishop(const ChessSide &side, const Position &pos)
-            : Piece(side, pos) {}
+    Bishop::Bishop(const ChessSide &side)
+            : Piece(side) {}
 
-    bool Bishop::moveStrategy(const Position &nextPos, const Board *board) {
-        auto currPos = getPosition();
+    MoveStatus Bishop::moveStrategy(const Position &currPos, const Position &nextPos, const Board *board) {
         auto deltaX = nextPos.first - currPos.first;
         auto deltaY = nextPos.second - currPos.second;
 
         if (abs(deltaX) == abs(deltaY)) {
             return checkCollision(currPos, nextPos, board);
-        } else return false;
+        } else return MoveStatus::NotValid;
     }
 }

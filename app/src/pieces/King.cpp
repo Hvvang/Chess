@@ -6,16 +6,15 @@
 #include "King.h"
 
 namespace Chess {
-    King::King(const ChessSide &side, const Position &pos)
-            : Piece(side, pos) {}
+    King::King(const ChessSide &side)
+            : Piece(side) {}
 
-    bool King::moveStrategy(const Position &nextPos, const Board *board) {
-        auto currPos = getPosition();
+    MoveStatus King::moveStrategy(const Position &currPos, const Position &nextPos, const Board *board) {
         auto deltaX = nextPos.first - currPos.first;
         auto deltaY = nextPos.second - currPos.second;
 
         if (abs(deltaX) * abs(deltaY) <= 1) {
             return checkCollision(currPos, nextPos, board);
-        } else return false;
+        } else return MoveStatus::NotValid;
     }
 }

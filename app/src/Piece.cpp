@@ -9,17 +9,12 @@ namespace Chess {
         return {left.first + right.first, left.second + right.second};
     }
 
-    Piece::Piece(const ChessSide &side, const Position &pos)
-            : side(side)
-            , pos(pos) {};
+    Piece::Piece(const ChessSide &side)
+            : side(side) {};
 
     const ChessSide &Piece::getSide() const {
         return side;
     };
-
-    const Position &Piece::getPosition() const {
-        return pos;
-    }
 
     const bool &Piece::isKilled() const {
         return death;
@@ -29,17 +24,8 @@ namespace Chess {
         this->death = death;
     }
 
-    void Piece::setPosition(Position pos) {
-        this->pos = pos;
-    }
-
-    bool Piece::canMove(Position nextPos, Board *board) {
-        if (moveStrategy(nextPos, board)) {
-            std::cout << "piw" << std::endl;
-            return true;
-        }
-        std::cout << "paf" << std::endl;
-        return false;
+    MoveStatus Piece::canMove(const Position &currPos, const Position &nextPos, Board *board) {
+        return moveStrategy(currPos, nextPos, board);
     }
 
     Position Piece::getDirection(const int &deltaX, const int &deltaY) {
@@ -55,7 +41,7 @@ namespace Chess {
         }
     }
 
-    bool Piece::checkCollision(const Position &currPos, const Position &nextPos, const Board *board) {
+    MoveStatus Piece::checkCollision(const Position &currPos, const Position &nextPos, const Board *board) {
         auto deltaY = nextPos.first - currPos.first;
         auto deltaX = nextPos.second - currPos.second;
         const auto &direction = getDirection(deltaX, deltaY);
@@ -63,21 +49,20 @@ namespace Chess {
 
         do {
             temp = temp + direction;
-            const auto &piece = board->getSpot(temp);
+            const auto &piece = board->getSpot(temp)->getPiece();
 
-            std::cout << "TEPM: " << temp.first << " " << temp.second << std::endl;
-            if (piece != nullptr) {
+            if (piece) {
                 if (temp != nextPos)
-                    return false;
+                    return MoveStatus::NotValid;
                 else if (this->getSide() == piece->getSide())
-                    return false;
-                else return true;
+                    return MoveStatus::NotValid;
+                else return MoveStatus::KillMove;
             }
         } while (temp != nextPos);
-        return true;
+        return MoveStatus::Default;
     }
 
-    bool Piece::moveStrategy(const Position &nextPos, const Board *board) {
-        return false;
-    }
+//    MoveStatus Piece::moveStrategy(const Position &nextPos, const Board *board) {
+//        return MoveStatus::NotValid;
+//    }
 }

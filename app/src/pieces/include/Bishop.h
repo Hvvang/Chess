@@ -10,10 +10,10 @@
 namespace Chess {
 class Bishop final : public Piece {
 public:
-    Bishop(const ChessSide &side, const Position &pos);
+    Bishop(const ChessSide &side);
 
 private:
-    bool moveStrategy(const Position &nextPos, const Board *board) override;
+    MoveStatus moveStrategy(const Position &currPos, const Position &nextPos, const Board *board) override;
 };
 }
 

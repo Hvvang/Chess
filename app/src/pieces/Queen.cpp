@@ -6,16 +6,15 @@
 #include "Queen.h"
 
 namespace Chess {
-    Queen::Queen(const ChessSide &side, const Position &pos)
-            : Piece(side, pos) {}
+    Queen::Queen(const ChessSide &side)
+            : Piece(side) {}
 
-    bool Queen::moveStrategy(const Position &nextPos, const Board *board) {
-        auto currPos = getPosition();
+    MoveStatus Queen::moveStrategy(const Position &currPos, const Position &nextPos, const Board *board) {
         auto deltaX = nextPos.first - currPos.first;
         auto deltaY = nextPos.second - currPos.second;
 
         if (abs(deltaX) == abs(deltaY) || (!deltaX || !deltaY)) {
             return checkCollision(currPos, nextPos, board);
-        } else return false;
+        } else return MoveStatus::NotValid;
     }
 }
