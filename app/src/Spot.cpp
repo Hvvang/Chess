@@ -18,4 +18,8 @@ namespace Chess {
     Piece *Spot::getPiece() const {
         return piece;
     }
+
+    void Spot::setPiece(Piece *piece) {
+        Spot::piece = piece;
+    }
 }

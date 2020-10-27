@@ -7,7 +7,7 @@
 namespace Chess {
 
     Rock::Rock(const ChessSide &side)
-        : Piece(side) {}
+        : Piece(side, Types::Rock) {}
 
     MoveStatus Rock::moveStrategy(const Position &currPos, const Position &nextPos, const Board *board) {
         auto deltaX = nextPos.first - currPos.first;

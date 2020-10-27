@@ -7,7 +7,7 @@
 
 namespace Chess {
     Pawn::Pawn(const ChessSide &side)
-            : Piece(side) {}
+            : Piece(side, Types::Pawn) {}
 
     MoveStatus Pawn::moveStrategy(const Position &currPos, const Position &nextPos, const Board *board) {
         auto deltaY = nextPos.first - currPos.first;

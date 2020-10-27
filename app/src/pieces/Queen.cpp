@@ -7,7 +7,7 @@
 
 namespace Chess {
     Queen::Queen(const ChessSide &side)
-            : Piece(side) {}
+            : Piece(side, Types::Queen) {}
 
     MoveStatus Queen::moveStrategy(const Position &currPos, const Position &nextPos, const Board *board) {
         auto deltaX = nextPos.first - currPos.first;

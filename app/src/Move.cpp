@@ -19,7 +19,9 @@ namespace Chess {
             if (nextPiece) {
                 boardField[nextPos.first][nextPos.second].reset();
             }
-            boardField[currPos.first][currPos.second].swap(boardField[nextPos.first][nextPos.second]);
+            boardField[nextPos.first][nextPos.second]->setPiece(boardField[currPos.first][currPos.second]->getPiece());
+            boardField[currPos.first][currPos.second]->setPiece(nullptr);
+//            boardField[currPos.first][currPos.second].swap(boardField[nextPos.first][nextPos.second]);
 //            boardField[nextPos.first][nextPos.second]->setPosition(nextPos);
         } else {
             std::cout << "not valid" << std::endl;

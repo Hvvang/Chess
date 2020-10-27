@@ -21,14 +21,14 @@ namespace Chess {
 
     void Board::initBoard() {
         // init spots with white main pieces
-        board[0][0] = std::make_unique<Spot>(Position (0, 1), new Rock(ChessSide::WHITE));
+        board[0][0] = std::make_unique<Spot>(Position(0, 1), new Rock(ChessSide::WHITE));
         board[0][1] = std::make_unique<Spot>(Position(0, 2), new Knight(ChessSide::WHITE));
-        board[0][2] = std::make_unique<Spot>( Position(0, 2), new Bishop(ChessSide::WHITE));
-        board[0][3] = std::make_unique<Spot>( Position(0, 3), new Queen(ChessSide::WHITE));
-        board[0][4] = std::make_unique<Spot>( Position(0, 4), new King(ChessSide::WHITE));
-        board[0][5] = std::make_unique<Spot>( Position(0, 5), new Bishop(ChessSide::WHITE));
-        board[0][6] = std::make_unique<Spot>( Position(0, 6), new Knight(ChessSide::WHITE));
-        board[0][7] = std::make_unique<Spot>( Position(0, 7), new Rock(ChessSide::WHITE));
+        board[0][2] = std::make_unique<Spot>(Position(0, 2), new Bishop(ChessSide::WHITE));
+        board[0][3] = std::make_unique<Spot>(Position(0, 3), new Queen(ChessSide::WHITE));
+        board[0][4] = std::make_unique<Spot>(Position(0, 4), new King(ChessSide::WHITE));
+        board[0][5] = std::make_unique<Spot>(Position(0, 5), new Bishop(ChessSide::WHITE));
+        board[0][6] = std::make_unique<Spot>(Position(0, 6), new Knight(ChessSide::WHITE));
+        board[0][7] = std::make_unique<Spot>(Position(0, 7), new Rock(ChessSide::WHITE));
 
         for (int i = 1; i < BOARD_ROWS - 1; ++i) {
             for (int j = 0; j < BOARD_COLS; ++j) {

@@ -9,7 +9,7 @@ namespace Chess {
     Game::Game(Players players)
         : board(new Board())
         , move(new Move(board))
-        , currTurn(ChessSide::BLACK) {
+        , currTurn(ChessSide::WHITE) {
         this->players = std::move(players);
         this->board->initBoard();
     }
@@ -38,15 +38,15 @@ namespace Chess {
     }
 
     const bool &Game::isCurrTurn(const Position &pos) {
-        if (auto piece = this->board->getSpot(pos)) {
-            std::cout << "34\n";
-//            auto t = piece->getSide();
-//            std::cout << "343\n";
-//            if (piece->getSide() == currTurn) {
-//                std::cout << "35\n";
-//
+        auto piece = this->board->getSpot(pos)->getPiece();
+        if (piece) {
+            piece->name();
+            if (piece->getSide() == currTurn) {
                 return true;
-//            }
+            } else {
+                std::cout << "opponent's turn\n";
+                return false;
+            }
         } else return false;
     }
 

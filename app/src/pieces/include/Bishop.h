@@ -12,6 +12,8 @@ class Bishop final : public Piece {
 public:
     Bishop(const ChessSide &side);
 
+    void name() override { std::cout << (getSide() == ChessSide::WHITE ? "white" : "black") << " bishop" << std::endl; }
+
 private:
     MoveStatus moveStrategy(const Position &currPos, const Position &nextPos, const Board *board) override;
 };

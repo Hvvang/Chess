@@ -12,6 +12,8 @@ class Knight final : public Piece {
 public:
     Knight(const ChessSide &side);
 
+    void name() override { std::cout << (getSide() == ChessSide::WHITE ? "white" : "black") << " knight" << std::endl; }
+
 
 private:
     MoveStatus checkCollision(const Position &currPos, const Position &nextPos, const Board *board) override;

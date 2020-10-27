@@ -9,8 +9,9 @@ namespace Chess {
         return {left.first + right.first, left.second + right.second};
     }
 
-    Piece::Piece(const ChessSide &side)
-            : side(side) {};
+    Piece::Piece(const ChessSide &side, const Types &type)
+            : side(side)
+            , type(type) {};
 
     const ChessSide &Piece::getSide() const {
         return side;
@@ -60,6 +61,10 @@ namespace Chess {
             }
         } while (temp != nextPos);
         return MoveStatus::Default;
+    }
+
+    const Types &Piece::getType() const {
+        return type;
     }
 
 //    MoveStatus Piece::moveStrategy(const Position &nextPos, const Board *board) {

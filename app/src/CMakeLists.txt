@@ -13,6 +13,7 @@ set(SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/Piece.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Player.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Spot.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/Render.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/pieces/Bishop.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/pieces/King.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/pieces/Knight.cpp
@@ -28,12 +29,13 @@ set(HEADERS
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Piece.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Player.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Spot.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/Render.h
         ${CMAKE_CURRENT_SOURCE_DIR}/pieces/include/Bishop.h
         ${CMAKE_CURRENT_SOURCE_DIR}/pieces/include/King.h
         ${CMAKE_CURRENT_SOURCE_DIR}/pieces/include/Knight.h
         ${CMAKE_CURRENT_SOURCE_DIR}/pieces/include/Pawn.h
         ${CMAKE_CURRENT_SOURCE_DIR}/pieces/include/Queen.h
         ${CMAKE_CURRENT_SOURCE_DIR}/pieces/include/Rock.h
-)
+        )
 
 add_library(SRC_LIB STATIC ${SOURCES} ${HEADERS})

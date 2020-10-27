@@ -12,6 +12,7 @@ include_directories(
 
 configure_file(res/board.png ${CMAKE_CURRENT_BINARY_DIR}/board.png COPYONLY)
 configure_file(res/figures.png ${CMAKE_CURRENT_BINARY_DIR}/figures.png COPYONLY)
+configure_file(res/sansation.ttf ${CMAKE_CURRENT_BINARY_DIR}/sansation.ttf COPYONLY)
 
 add_executable(chess ${SOURCE_EXE})
 

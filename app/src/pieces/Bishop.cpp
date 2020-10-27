@@ -7,7 +7,7 @@
 
 namespace Chess {
     Bishop::Bishop(const ChessSide &side)
-            : Piece(side) {}
+            : Piece(side, Types::Bishop) {}
 
     MoveStatus Bishop::moveStrategy(const Position &currPos, const Position &nextPos, const Board *board) {
         auto deltaX = nextPos.first - currPos.first;

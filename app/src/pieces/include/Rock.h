@@ -12,6 +12,9 @@ class Rock : public Piece {
 public:
     Rock(const ChessSide &side);
 
+    void name() override { std::cout << (getSide() == ChessSide::WHITE ? "white" : "black") << " rock" << std::endl; }
+
+
 private:
     MoveStatus moveStrategy(const Position &currPos, const Position &nextPos, const Board *board) override;
 };

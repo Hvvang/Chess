@@ -17,10 +17,12 @@ namespace Chess {
 
         [[nodiscard]] const Position &getPos() const;
         [[nodiscard]] Piece *getPiece() const;
+        void setPiece(Piece *piece);
 
     private:
-        Position pos;
+        const Position pos;
         Piece *piece;
+
     };
 }
 

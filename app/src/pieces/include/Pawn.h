@@ -12,6 +12,7 @@ class Pawn final : public Piece {
 public:
     Pawn(const ChessSide &side);
 
+    void name() override { std::cout << (getSide() == ChessSide::WHITE ? "white" : "black") << " pawn" << std::endl; }
 
 private:
     MoveStatus checkCollision(const Position &currPos, const Position &nextPos, const Board *board) override;

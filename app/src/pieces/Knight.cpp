@@ -7,7 +7,7 @@
 #include <iostream>
 namespace Chess {
     Knight::Knight(const ChessSide &side)
-            : Piece(side) {}
+            : Piece(side, Types::Knight) {}
 
     MoveStatus Knight::moveStrategy(const Position &currPos, const Position &nextPos, const Board *board) {
         auto deltaX = nextPos.first - currPos.first;
