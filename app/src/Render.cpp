@@ -31,24 +31,7 @@ void Render::initFigures(const std::string &fPath) {
 
     auto boardSize = tFigures.getSize();
     figureSize = sf::Vector2f(boardSize.x / 6, boardSize.y / 2);
-
-    auto board = game->getBoard();
-
-    int k = 0;
-    for (const auto &it : board->getBoard()) {
-       for (const auto &spot : it) {
-           if (auto piece = spot->getPiece()) {
-               figures[k] = std::make_unique<sf::Sprite>(tFigures);
-               figures[k]->setTextureRect(sf::IntRect(figureSize.x * static_cast<int>(piece->getType()),
-                                                      figureSize.y * static_cast<int>(piece->getSide()),
-                                                      figureSize.x,
-                                                      figureSize.y));
-               figures[k]->scale(sf::Vector2f(spotSize.x / figureSize.x, spotSize.y / figureSize.y));
-               figures[k]->setPosition(spotSize.x * spot->getPos().second, spotSize.y * spot->getPos().first);
-               ++k;
-           }
-       }
-    }
+    updatePiecesPosition();
 }
 
 void Render::clearFigures() {
@@ -75,10 +58,9 @@ void Render::draw() {
         window.clear();
         window.draw(*board);
         for (const auto &figure : figures) {
-            if (figure.get()) {
-                window.draw(*figure);
-            }
+            window.draw(*figure);
         }
+//        drawFigures();
         if (isMove) {
             window.draw(rect);
             drawPossibleMoves(toPosition(n->getPosition()));
@@ -110,7 +92,9 @@ void Render::draw() {
                         auto mouseCords = sf::Vector2i(event.mouseButton.x, event.mouseButton.y);
                         auto newPos = 100.f * sf::Vector2f(mouseCords.x / 100, mouseCords.y / 100);
                         isMove = false;
-                        n->setPosition(newPos.x, newPos.y);
+                        game->getMove()->changePosition(toPosition(n->getPosition()), toPosition(newPos));
+//                        n->setPosition(newPos.x, newPos.y);
+                        updatePiecesPosition();
 //                        game->isCheck();
                     }
                 }
@@ -162,6 +146,27 @@ void Render::drawPossibleMoves(const Chess::Position &pos) {
     for (const auto &it : availiblePos) {
         possibleMove.setPosition(toVector(it));
         window.draw(possibleMove);
+    }
+}
+
+void Render::updatePiecesPosition() {
+    auto board = game->getBoard();
+
+    int k = 0;
+    for (const auto &it : board->getBoard()) {
+        for (const auto &spot : it) {
+            if (auto piece = spot->getPiece()) {
+                figures[k] = std::make_unique<sf::Sprite>(tFigures);
+                figures[k]->setTextureRect(sf::IntRect(figureSize.x * static_cast<int>(piece->getType()),
+                                                       figureSize.y * static_cast<int>(piece->getSide()),
+                                                       figureSize.x,
+                                                       figureSize.y));
+                figures[k]->scale(sf::Vector2f(spotSize.x / figureSize.x, spotSize.y / figureSize.y));
+                figures[k]->setPosition(spotSize.x * spot->getPos().second, spotSize.y * spot->getPos().first);
+                window.draw(*figures[k]);
+                ++k;
+            }
+        }
     }
 }
 

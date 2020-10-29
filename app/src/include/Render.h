@@ -21,6 +21,7 @@ public:
     void gameOver();
     void draw();
 
+    void updatePiecesPosition();
     void drawPossibleMoves(const Chess::Position &pos);
 
     void clearFigures();
