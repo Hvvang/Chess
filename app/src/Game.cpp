@@ -100,26 +100,27 @@ namespace Chess {
     const GameStatus & Game::makeMove(const Position &currPos, const Position &nextPos) {
         if (currPos != nextPos) {
             if (auto moveStatus = move->getMoveStatus(currPos, nextPos); moveStatus != MoveStatus::NotValid) {
-                changeTurn();
-                if (moveStatus == MoveStatus::Default) {
+                if (moveStatus == MoveStatus::Default || moveStatus == MoveStatus::KillMove) {
                     move->changePosition(currPos, nextPos);
+                    if (auto kingPos = board->getSpot(Types::King, currTurn); isCheck(kingPos->getPos())) {
+                        move->changePosition(nextPos, currPos);
+                        return GameStatus::KingCheck;
+                    }
+                    board->getSpot(nextPos)->getPiece()->setHasMoved();
+                    changeTurn();
                     return GameStatus::Default;
                 }
-                if (moveStatus == MoveStatus::KillMove) {
-                    auto &boardField = board->getBoard();
-                    boardField[nextPos.first][nextPos.second]->setPiece(boardField[currPos.first][currPos.second]->getPiece());
-                    boardField[currPos.first][currPos.second]->setPiece(nullptr);
-                    return GameStatus::KillMove;
-                }
                 if (moveStatus == MoveStatus::Castle) {
-                    auto rockPiece = board->getSpot(Position(currPos.first, nextPos.second == 2 ? 0 : 7));
+                    auto rockSpot = board->getSpot(Position(currPos.first, nextPos.second == 2 ? 0 : 7));
+                    auto rockPiece = rockSpot->getPiece();
 
-                    if (rockPiece->getPiece() && !rockPiece->getPiece()->isHasMoved()) {
-                        auto &boardField = board->getBoard();
-                        boardField[nextPos.first][nextPos.second]->setPiece(boardField[currPos.first][currPos.second]->getPiece());
-                        boardField[nextPos.first][nextPos.second == 2 ? 3 : 5]->setPiece(boardField[nextPos.first][nextPos.second == 2 ? 0 : 7]->getPiece());
-                        boardField[currPos.first][currPos.second]->setPiece(nullptr);
-                        boardField[nextPos.first][nextPos.second == 2 ? 0 : 7]->setPiece(nullptr);
+                    if (rockPiece && rockPiece->getType() == Types::Rock && !rockPiece->isHasMoved()) {
+                        auto rockPosAfterCastling = Position(currPos.first, nextPos.second == 2 ? 3 : 5);
+                        move->changePosition(currPos, nextPos);
+                        move->changePosition(rockSpot->getPos(), rockPosAfterCastling);
+                        rockPiece->setHasMoved();
+                        board->getSpot(nextPos)->getPiece()->setHasMoved();
+                        changeTurn();
                         return GameStatus::Castle;
                     } else return GameStatus::InvalidCastle;
                 }

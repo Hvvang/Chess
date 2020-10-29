@@ -8,26 +8,20 @@
 namespace Chess {
 
     Move::Move(Board *board)
-        : board(board) {}
+        : board(board) {};
 
+
+//  set current piece to spot that has position = nextPos and
+//  remove pointer to current piece in spot that has position = currPos
     void Move::changePosition(const Position &currPos, const Position &nextPos) {
-        auto currPiece = board->getSpot(currPos)->getPiece();
-        auto nextPiece = board->getSpot(nextPos)->getPiece();
+        auto &boardField = board->getBoard();
+        auto piece = boardField[currPos.first][currPos.second]->getPiece();
 
-        if (currPiece->canMove(currPos, nextPos, board) != MoveStatus::NotValid) {
-            auto &boardField = board->getBoard();
-            if (nextPiece) {
-                boardField[nextPos.first][nextPos.second].reset();
-            }
-            boardField[nextPos.first][nextPos.second]->setPiece(boardField[currPos.first][currPos.second]->getPiece());
-            boardField[currPos.first][currPos.second]->setPiece(nullptr);
-//            boardField[currPos.first][currPos.second].swap(boardField[nextPos.first][nextPos.second]);
-//            boardField[nextPos.first][nextPos.second]->setPosition(nextPos);
-        } else {
-            std::cout << "not valid" << std::endl;
-        }
+        boardField[nextPos.first][nextPos.second]->setPiece(piece);
+        boardField[currPos.first][currPos.second]->setPiece(nullptr);
     }
 
+    // get moveStatus for current selected piece type
     const MoveStatus &Move::getMoveStatus(const Position &currPos, const Position &nextPos) const {
         return board->getSpot(currPos)->getPiece()->moveStrategy(currPos, nextPos, board);
     }

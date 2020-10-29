@@ -62,16 +62,6 @@ void Render::draw() {
     window.display();
 
     while (window.isOpen()) {
-//        window.clear();
-//        window.draw(*board);
-//        for (const auto &figure : figures) {
-//            window.draw(*figure);
-//        }
-//        if (isMove) {
-//            window.draw(rect);
-//            drawPossibleMoves(toPosition(n->getPosition()));
-//        }
-//        window.display();
         sf::Vector2i mousePos = sf::Mouse::getPosition(window);
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -107,6 +97,13 @@ void Render::draw() {
                         if (gameStatus == Chess::GameStatus::Default
                             || gameStatus == Chess::GameStatus::KillMove
                             || gameStatus == Chess::GameStatus::Castle) {
+                            isMove = false;
+                            window.clear();
+                            window.draw(*board);
+                            updatePiecesPosition();
+                            window.display();
+                        }
+                        if (gameStatus == Chess::GameStatus::KingCheck || gameStatus == Chess::GameStatus::DoesntMove) {
                             isMove = false;
                             window.clear();
                             window.draw(*board);
