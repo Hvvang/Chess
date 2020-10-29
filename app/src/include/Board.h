@@ -7,6 +7,7 @@
 
 #include "Spot.h"
 #include <array>
+#include <vector>
 #include <memory>
 
 namespace Chess {
@@ -16,7 +17,8 @@ namespace Chess {
     using Field = std::array<std::array<T, BOARD_COLS>, BOARD_ROWS>;
 
     using Position = std::pair<int, int>;
-
+    enum class Types;
+    enum class ChessSide;
     class Piece;
     class Spot;
     class Board final {
@@ -27,6 +29,8 @@ namespace Chess {
         void initBoard();
         void reset();
 
+        Spot *getSpot(const Types &type, const ChessSide &side);
+        std::vector<Spot *> getSpotsByChessSide(const ChessSide &side);
         [[nodiscard]] Spot *getSpot(const Position &pos) const;
         [[nodiscard]] Field<std::unique_ptr<Spot>> &getBoard();
 

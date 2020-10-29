@@ -73,6 +73,14 @@ void Render::removeFigure(std::unique_ptr<sf::Sprite> *figure) {
 }
 
 void Render::draw() {
+    bool isMove = false;
+    int n = 0;
+
+    sf::RectangleShape rect;
+    rect.setSize(spotSize);
+    rect.setFillColor(sf::Color::Transparent);
+    rect.setOutlineColor(sf::Color(255, 0, 0));
+    rect.setOutlineThickness(-5);
 
     while (window.isOpen()) {
         window.clear();
@@ -82,6 +90,8 @@ void Render::draw() {
                 window.draw(*figures[i]);
             }
         }
+        if (isMove)
+            window.draw(rect);
         window.display();
 
         sf::Vector2i mousePos = sf::Mouse::getPosition(window);
@@ -92,17 +102,26 @@ void Render::draw() {
             }
             if (event.type == sf::Event::MouseButtonPressed) {
                 if (event.mouseButton.button == sf::Mouse::Left) {
-                    for (int i = 0; i < 32; ++i) {
-                        if (figures[i]->getGlobalBounds().contains(mousePos.x, mousePos.y)) {
-                            if (game->isCurrTurn(toPosition(figures[i]->getPosition()))) {
-                                std::cout << "ok\n";
-                            } else
-                                std::cout << "Opponent`s move\n";
+                    if (!isMove) {
+                        for (int i = 0; i < 32; ++i) {
+                            if (figures[i]->getGlobalBounds().contains(mousePos.x, mousePos.y)) {
+                                if (game->isCurrTurn(toPosition(figures[i]->getPosition()))) {
+                                    std::cout << "ok\n";
+                                    n = i;
+                                    isMove = true;
+                                    rect.setPosition(figures[i]->getPosition());
+                                } else
+                                    std::cout << "Opponent`s move\n";
+                                break;
+                            }
                         }
+                    } else {
+                        auto mouseCords = sf::Vector2i(event.mouseButton.x, event.mouseButton.y);
+                        auto newPos = 100.f * sf::Vector2f(mouseCords.x / 100, mouseCords.y / 100);
+                        isMove = false;
+                        figures[n]->setPosition(newPos.x, newPos.y);
+                        game->isCheck();
                     }
-                }
-                if (event.type == sf::Event::MouseButtonReleased) {
-
                 }
             }
         }

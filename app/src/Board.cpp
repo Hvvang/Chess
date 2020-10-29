@@ -65,4 +65,32 @@ namespace Chess {
     Spot *Board::getSpot(const Position &pos) const {
         return this->board[pos.first][pos.second].get();
     }
+
+    Spot *Board::getSpot(const Types &type, const ChessSide &side) {
+        for (const auto &it : board) {
+            for (const auto &spot : it) {
+                if (auto piece = spot->getPiece()) {
+                    if ((piece->getType() == type || type == Types::Any) && piece->getSide() == side) {
+                        return spot.get();
+                    }
+                    else continue;
+                }
+            }
+        }
+    }
+
+    std::vector<Spot *> Board::getSpotsByChessSide(const ChessSide &side) {
+        std::vector<Spot *> spots;
+        for (const auto &it : board) {
+            for (const auto &spot : it) {
+                if (auto piece = spot->getPiece()) {
+                    if (piece->getSide() == side) {
+                        spots.push_back(spot.get());
+                    }
+                    else continue;
+                }
+            }
+        }
+        return spots;
+    }
 }

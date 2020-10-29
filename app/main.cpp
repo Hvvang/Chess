@@ -23,34 +23,6 @@ int main() {
 
     r->draw();
 
-//    bool isTook = false;
-//    int n = 0;
-//    Position pos = {0, 0};
-    // run the program as long as the window is open
-//    while (window.isOpen())
-//    {
-//        sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-        // check all the window's events that were triggered since the last iteration of the loop
-//        sf::Event event;
-//        while (window.pollEvent(event))
-//        {
-//            // "close requested" event: we close the window
-//            if (event.type == sf::Event::Closed)
-//                window.close();
-//            if (event.type == sf::Event::MouseButtonPressed) {
-//                for (int i = 0; i < 32; ++i) {
-//                    if (!isTook) {
-//                        if (sprites[i].getGlobalBounds().contains(mousePos.x, mousePos.y)) {
-//                            std::cout << "1\n";
-//                            pos = translateCords(sprites[i].getPosition());
-//                            std::cout << "2\n";
-//                            if (game->isCurrTurn(pos)) {
-//                                isTook = !isTook;
-//                                n = i;
-//                            }
-//                            std::cout << "3\n";
-//                            break;
-//                        }
 //                    } else {
 //                        auto currPos = sprites[n].getPosition() + sf::Vector2f(50, 50);
 //                        sf::Vector2f newPos = sf::Vector2f(100 * int(currPos.x / 100), 100 * int(currPos.y / 100));
@@ -71,17 +43,5 @@ int main() {
 //
 //            }
 //        }
-
-//        window.clear();
-//        window.draw(bb);
-//        window.draw(r->getBoard().operator*());
-//        r->draw();
-//        window.draw(s_board);
-//        for (int i = 0; i < 32; ++i) window.draw(sprites[i]);
-
-        // end the current frame
-//        window.display();
-//    }
-
     return 0;
 }

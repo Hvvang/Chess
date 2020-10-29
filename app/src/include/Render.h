@@ -31,6 +31,10 @@ public:
     [[nodiscard]] const std::unique_ptr<sf::Sprite> &getBoard() const;
     [[nodiscard]] const std::unique_ptr<sf::Sprite> *getFigures() const;
 
+//private:
+//    void takePiece(std::unique_ptr<sf::Sprite> *figure);
+//    void movePiece(std::unique_ptr<sf::Sprite> *figure);
+
 private:
     sf::Font font;
     sf::Texture tBoard;

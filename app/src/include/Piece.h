@@ -32,7 +32,8 @@ namespace Chess {
         Bishop = 2,
         Queen = 1,
         King = 0,
-        Pawn = 5
+        Pawn = 5,
+        Any = 6
     };
 
     class Board;

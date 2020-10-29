@@ -10,6 +10,7 @@ namespace Chess {
         : board(new Board())
         , move(new Move(board))
         , currTurn(ChessSide::WHITE) {
+        this->currTurn = ChessSide::WHITE;
         this->players = std::move(players);
         this->board->initBoard();
     }
@@ -24,10 +25,6 @@ namespace Chess {
 
     const ChessSide &Game::getCurrTurn() const {
         return currTurn;
-    }
-
-    void Game::setCurrTurn(const ChessSide &currTurn) {
-        this->currTurn = currTurn;
     }
 
     void Game::setBoard(Board *board) {
@@ -52,6 +49,25 @@ namespace Chess {
 
     Move *Game::getMove() const {
         return move;
+    }
+
+    // getting current player king layout and checking it collision with opponents` pieces
+    bool Game::isCheck() {
+        auto currKing = board->getSpot(Chess::Types::King, currTurn);
+        auto opponentSide = (currTurn == ChessSide::WHITE) ? ChessSide::BLACK : ChessSide::WHITE;
+        auto opponentPieces = board->getSpotsByChessSide(opponentSide);
+
+        for (const auto &it : opponentPieces) {
+            if (it->getPiece()->canMove(it->getPos(), currKing->getPos(), board) == MoveStatus::KillMove) {
+                std::cout << "Check" << std::endl;
+            }
+            std::cout << "not Check" << std::endl;
+        }
+        return false;
+    }
+
+    void Game::changeTurn() {
+        this->currTurn = (this->currTurn == ChessSide::WHITE) ? ChessSide::BLACK : ChessSide::WHITE;
     }
 
 

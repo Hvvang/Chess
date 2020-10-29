@@ -22,12 +22,13 @@ namespace Chess {
         [[nodiscard]] const ChessSide &getCurrTurn() const;
         [[nodiscard]] Move *getMove() const;
 
-        void setCurrTurn(const ChessSide &currTurn);
         void setBoard(Board *board);
+        bool isCheck();
         void run();
         const bool &isCurrTurn(const Position &pos);
 
     private:
+        void changeTurn();
 
     private:
         Players players;
