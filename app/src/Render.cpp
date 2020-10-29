@@ -5,6 +5,8 @@
 #include "Render.h"
 
 #include <iostream>
+#include <vector>
+
 
 Render::Render(sf::RenderWindow &window)
         : window(window)
@@ -22,17 +24,6 @@ void Render::initBoard(const std::string &fPath) {
     board = std::make_unique<sf::Sprite>(tBoard);
 }
 
-const int map[8][8] = {
-        -5, -4, -3, -2, -1, -3, -4, -5,
-        -6, -6, -6, -6, -6, -6, -6, -6,
-        0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0,
-        6, 6, 6, 6, 6, 6, 6, 6,
-        5, 4, 3, 2, 1, 3, 4, 5,
-};
-
 void Render::initFigures(const std::string &fPath) {
     if (!tFigures.loadFromFile(fPath)) {
         throw "Invalid file path to load figures texture\n";
@@ -44,7 +35,6 @@ void Render::initFigures(const std::string &fPath) {
     auto board = game->getBoard();
 
     int k = 0;
-    int row = 0;
     for (const auto &it : board->getBoard()) {
        for (const auto &spot : it) {
            if (auto piece = spot->getPiece()) {
@@ -54,11 +44,10 @@ void Render::initFigures(const std::string &fPath) {
                                                       figureSize.x,
                                                       figureSize.y));
                figures[k]->scale(sf::Vector2f(spotSize.x / figureSize.x, spotSize.y / figureSize.y));
-               figures[k]->setPosition(spotSize.x * (k % 8), spotSize.y * row);
+               figures[k]->setPosition(spotSize.x * spot->getPos().second, spotSize.y * spot->getPos().first);
                ++k;
            }
        }
-       ++row;
     }
 }
 
@@ -74,7 +63,7 @@ void Render::removeFigure(std::unique_ptr<sf::Sprite> *figure) {
 
 void Render::draw() {
     bool isMove = false;
-    int n = 0;
+    sf::Sprite *n;
 
     sf::RectangleShape rect;
     rect.setSize(spotSize);
@@ -85,13 +74,15 @@ void Render::draw() {
     while (window.isOpen()) {
         window.clear();
         window.draw(*board);
-        for (int i = 0; i < 32; ++i) {
-            if (figures[i].get()) {
-                window.draw(*figures[i]);
+        for (const auto &figure : figures) {
+            if (figure.get()) {
+                window.draw(*figure);
             }
         }
-        if (isMove)
+        if (isMove) {
             window.draw(rect);
+            drawPossibleMoves(toPosition(n->getPosition()));
+        }
         window.display();
 
         sf::Vector2i mousePos = sf::Mouse::getPosition(window);
@@ -103,13 +94,13 @@ void Render::draw() {
             if (event.type == sf::Event::MouseButtonPressed) {
                 if (event.mouseButton.button == sf::Mouse::Left) {
                     if (!isMove) {
-                        for (int i = 0; i < 32; ++i) {
-                            if (figures[i]->getGlobalBounds().contains(mousePos.x, mousePos.y)) {
-                                if (game->isCurrTurn(toPosition(figures[i]->getPosition()))) {
+                        for (const auto & figure : figures) {
+                            if (figure->getGlobalBounds().contains(mousePos.x, mousePos.y)) {
+                                if (game->isCurrTurn(toPosition(figure->getPosition()))) {
                                     std::cout << "ok\n";
-                                    n = i;
+                                    n = figure.get();
                                     isMove = true;
-                                    rect.setPosition(figures[i]->getPosition());
+                                    rect.setPosition(figure->getPosition());
                                 } else
                                     std::cout << "Opponent`s move\n";
                                 break;
@@ -119,8 +110,8 @@ void Render::draw() {
                         auto mouseCords = sf::Vector2i(event.mouseButton.x, event.mouseButton.y);
                         auto newPos = 100.f * sf::Vector2f(mouseCords.x / 100, mouseCords.y / 100);
                         isMove = false;
-                        figures[n]->setPosition(newPos.x, newPos.y);
-                        game->isCheck();
+                        n->setPosition(newPos.x, newPos.y);
+//                        game->isCheck();
                     }
                 }
             }
@@ -154,7 +145,23 @@ Chess::Position Render::toPosition(sf::Vector2f cords) const {
 }
 
 sf::Vector2f Render::toVector(Chess::Position cords) const {
-    return sf::Vector2f(cords.first * spotSize.x, cords.second * spotSize.y);
+    return sf::Vector2f(cords.second * spotSize.y, cords.first * spotSize.x);
 
+}
+
+void Render::drawPossibleMoves(const Chess::Position &pos) {
+    const auto board = game->getBoard();
+    const auto &availiblePos = board->getSpot(pos)->getPiece()->getAvailibleMoves(pos, board);
+    sf::RectangleShape possibleMove;
+
+    possibleMove.setSize(spotSize);
+    possibleMove.setFillColor(sf::Color::Transparent);
+    possibleMove.setOutlineColor(sf::Color(255, 255, 0));
+    possibleMove.setOutlineThickness(-5);
+
+    for (const auto &it : availiblePos) {
+        possibleMove.setPosition(toVector(it));
+        window.draw(possibleMove);
+    }
 }
 

@@ -22,8 +22,6 @@ namespace Chess {
     MoveStatus Knight::checkCollision(const Position &currPos, const Position &nextPos, const Board *board) {
         const auto &piece = board->getSpot(nextPos)->getPiece();
 
-        std::cout << "currPos = " << currPos.first << " " << currPos.second << std::endl;
-        std::cout << "nextPos = " << nextPos.first << " " << nextPos.second << std::endl;
         if (piece != nullptr) {
             if (this->getSide() != piece->getSide())
                 return MoveStatus::KillMove;

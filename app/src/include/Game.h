@@ -10,6 +10,13 @@
 #include "Move.h"
 
 namespace Chess {
+    enum class GameStatus {
+        Default,
+        KingCheck,
+        PawnPromotion,
+
+    };
+
     using Players = std::pair<Player, Player>;
 
     class Game {
@@ -23,19 +30,21 @@ namespace Chess {
         [[nodiscard]] Move *getMove() const;
 
         void setBoard(Board *board);
-        bool isCheck();
+        bool isCheck(const Position &kingPos);
+        bool isCheckmate();
         void run();
         const bool &isCurrTurn(const Position &pos);
 
     private:
         void changeTurn();
+        void addMoveToHistory(const std::pair<Position, Position> &move);
 
     private:
         Players players;
         ChessSide currTurn;
         Board *board;
         Move *move;
-
+        std::vector<std::pair<Position, Position>> movesHistory;
     };
 }
 

@@ -6,9 +6,12 @@
 #define CHESS_PIECE_H
 
 #include <utility>
+#include <vector>
 #include "Board.h"
 #include <iostream>
 #include "Spot.h"
+
+
 
 namespace Chess {
     using Position = std::pair<int, int>;
@@ -46,9 +49,12 @@ namespace Chess {
         [[nodiscard]] const bool &isKilled() const;
 
         void setDeath(const bool &death = true);
-        virtual MoveStatus canMove(const Position &currPos, const Position &nextPos, Board *board);
+        void setHasMoved(const bool &hasMoved = true);
+        bool isHasMoved() const;
 
+        virtual MoveStatus canMove(const Position &currPos, const Position &nextPos, Board *board);
         virtual void name() = 0;
+        virtual std::vector<Position> getAvailibleMoves(const Position &currPos, Board *board);
 
     protected:
         virtual MoveStatus checkCollision(const Position &currPos, const Position &nextPos, const Board *board);
@@ -61,6 +67,7 @@ namespace Chess {
         const Types type;
         const ChessSide side;
         bool death = false;
+        bool hasMoved = false;
     };
 }
 

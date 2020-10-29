@@ -21,6 +21,8 @@ public:
     void gameOver();
     void draw();
 
+    void drawPossibleMoves(const Chess::Position &pos);
+
     void clearFigures();
     void removeFigure(std::unique_ptr<sf::Sprite> *figure);
 

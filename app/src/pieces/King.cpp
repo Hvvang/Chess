@@ -13,7 +13,9 @@ namespace Chess {
         auto deltaX = nextPos.first - currPos.first;
         auto deltaY = nextPos.second - currPos.second;
 
-        if (abs(deltaX) <= 1 && abs(deltaY) <= 1) {
+        // check on king castling
+        if ((abs(deltaX) <= 1 && abs(deltaY) <= 1)
+            || (!isHasMoved() && abs(deltaY) == 2 && !abs(deltaX))) {
             return checkCollision(currPos, nextPos, board);
         } else return MoveStatus::NotValid;
     }

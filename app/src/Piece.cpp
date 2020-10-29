@@ -26,7 +26,9 @@ namespace Chess {
     }
 
     MoveStatus Piece::canMove(const Position &currPos, const Position &nextPos, Board *board) {
-        return moveStrategy(currPos, nextPos, board);
+        if (currPos != nextPos) {
+            return moveStrategy(currPos, nextPos, board);
+        } else return MoveStatus::NotValid;
     }
 
     Position Piece::getDirection(const int &deltaX, const int &deltaY) {
@@ -67,7 +69,24 @@ namespace Chess {
         return type;
     }
 
-//    MoveStatus Piece::moveStrategy(const Position &nextPos, const Board *board) {
-//        return MoveStatus::NotValid;
-//    }
+    std::vector<Position> Piece::getAvailibleMoves(const Position &currPos, Board *board) {
+        std::vector<Position> availableMoves;
+
+        for (const auto &spots : board->getBoard()) {
+            for (const auto &it : spots) {
+                if (canMove(currPos, it->getPos(), board) != MoveStatus::NotValid) {
+                    availableMoves.push_back(it->getPos());
+                }
+            }
+        }
+        return availableMoves;
+    }
+
+    bool Piece::isHasMoved() const {
+        return hasMoved;
+    }
+
+    void Piece::setHasMoved(const bool &hasMoved) {
+        Piece::hasMoved = hasMoved;
+    }
 }
