@@ -56,12 +56,11 @@ namespace Chess {
         virtual void name() = 0;
         virtual std::vector<Position> getAvailibleMoves(const Position &currPos, Board *board);
 
-    protected:
         virtual MoveStatus checkCollision(const Position &currPos, const Position &nextPos, const Board *board);
+        virtual MoveStatus moveStrategy(const Position &currPos, const Position &nextPos, const Board *board) = 0;
 
     private:
         Position getDirection(const int &deltaX, const int &deltaY);
-        virtual MoveStatus moveStrategy(const Position &currPos, const Position &nextPos, const Board *board) = 0;
 
     private:
         const Types type;

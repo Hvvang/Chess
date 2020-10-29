@@ -13,8 +13,12 @@ namespace Chess {
     enum class GameStatus {
         Default,
         KingCheck,
+        KillMove,
         PawnPromotion,
-
+        DoesntMove,
+        InvalidMove,
+        Castle,
+        InvalidCastle
     };
 
     using Players = std::pair<Player, Player>;
@@ -34,9 +38,12 @@ namespace Chess {
         bool isCheckmate();
         void run();
         const bool &isCurrTurn(const Position &pos);
+        void changeTurn();
+
+        const GameStatus & makeMove(const Position &currPos, const Position &nextPos);
+
 
     private:
-        void changeTurn();
         void addMoveToHistory(const std::pair<Position, Position> &move);
 
     private:

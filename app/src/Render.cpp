@@ -54,19 +54,24 @@ void Render::draw() {
     rect.setOutlineColor(sf::Color(255, 0, 0));
     rect.setOutlineThickness(-5);
 
-    while (window.isOpen()) {
-        window.clear();
-        window.draw(*board);
-        for (const auto &figure : figures) {
-            window.draw(*figure);
-        }
-//        drawFigures();
-        if (isMove) {
-            window.draw(rect);
-            drawPossibleMoves(toPosition(n->getPosition()));
-        }
-        window.display();
+    window.clear();
+    window.draw(*board);
+    for (const auto &figure : figures) {
+        window.draw(*figure);
+    }
+    window.display();
 
+    while (window.isOpen()) {
+//        window.clear();
+//        window.draw(*board);
+//        for (const auto &figure : figures) {
+//            window.draw(*figure);
+//        }
+//        if (isMove) {
+//            window.draw(rect);
+//            drawPossibleMoves(toPosition(n->getPosition()));
+//        }
+//        window.display();
         sf::Vector2i mousePos = sf::Mouse::getPosition(window);
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -82,20 +87,32 @@ void Render::draw() {
                                     std::cout << "ok\n";
                                     n = figure.get();
                                     isMove = true;
+                                    window.clear();
+                                    window.draw(*board);
+                                    for (const auto &figure : figures) {
+                                        window.draw(*figure);
+                                    }
                                     rect.setPosition(figure->getPosition());
+                                    window.draw(rect);
+                                    drawPossibleMoves(toPosition(n->getPosition()));
+                                    window.display();
                                 } else
                                     std::cout << "Opponent`s move\n";
                                 break;
                             }
                         }
                     } else {
-                        auto mouseCords = sf::Vector2i(event.mouseButton.x, event.mouseButton.y);
-                        auto newPos = 100.f * sf::Vector2f(mouseCords.x / 100, mouseCords.y / 100);
-                        isMove = false;
-                        game->getMove()->changePosition(toPosition(n->getPosition()), toPosition(newPos));
-//                        n->setPosition(newPos.x, newPos.y);
-                        updatePiecesPosition();
-//                        game->isCheck();
+                        auto newPos = 100.f * sf::Vector2f(event.mouseButton.x / 100, event.mouseButton.y / 100);
+                        auto gameStatus = game->makeMove(toPosition(n->getPosition()), toPosition(newPos));
+                        if (gameStatus == Chess::GameStatus::Default
+                            || gameStatus == Chess::GameStatus::KillMove
+                            || gameStatus == Chess::GameStatus::Castle) {
+                            isMove = false;
+                            window.clear();
+                            window.draw(*board);
+                            updatePiecesPosition();
+                            window.display();
+                        }
                     }
                 }
             }
@@ -153,6 +170,9 @@ void Render::updatePiecesPosition() {
     auto board = game->getBoard();
 
     int k = 0;
+    for (int i = 0; i < 32; ++i) {
+        figures[i] = std::make_unique<sf::Sprite>();
+    }
     for (const auto &it : board->getBoard()) {
         for (const auto &spot : it) {
             if (auto piece = spot->getPiece()) {
@@ -169,4 +189,5 @@ void Render::updatePiecesPosition() {
         }
     }
 }
+
 

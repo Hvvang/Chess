@@ -28,7 +28,7 @@ namespace Chess {
         }
     }
 
-    MoveStatus Move::getMoveStatus(const Position &currPos, const Position &nextPos) {
-        return board->getSpot(currPos)->getPiece()->canMove(currPos, nextPos, board);
+    const MoveStatus &Move::getMoveStatus(const Position &currPos, const Position &nextPos) const {
+        return board->getSpot(currPos)->getPiece()->moveStrategy(currPos, nextPos, board);
     }
 }

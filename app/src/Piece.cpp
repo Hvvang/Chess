@@ -26,9 +26,7 @@ namespace Chess {
     }
 
     MoveStatus Piece::canMove(const Position &currPos, const Position &nextPos, Board *board) {
-        if (currPos != nextPos) {
-            return moveStrategy(currPos, nextPos, board);
-        } else return MoveStatus::NotValid;
+        return moveStrategy(currPos, nextPos, board);
     }
 
     Position Piece::getDirection(const int &deltaX, const int &deltaY) {
@@ -74,9 +72,10 @@ namespace Chess {
 
         for (const auto &spots : board->getBoard()) {
             for (const auto &it : spots) {
-                if (canMove(currPos, it->getPos(), board) != MoveStatus::NotValid) {
-                    availableMoves.push_back(it->getPos());
-                }
+                if (currPos != it->getPos())
+                    if (canMove(currPos, it->getPos(), board) != MoveStatus::NotValid) {
+                        availableMoves.push_back(it->getPos());
+                    }
             }
         }
         return availableMoves;

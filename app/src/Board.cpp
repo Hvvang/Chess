@@ -20,6 +20,10 @@ namespace Chess {
     }
 
     void Board::initBoard() {
+//        for (int i = 1; i < 7; ++i) {
+//            if (i != 4)
+//            board[0][i] = std::make_unique<Spot>(Position(0, i));
+//        }
         // init spots with white main pieces
         board[0][0] = std::make_unique<Spot>(Position(0, 0), new Rock(ChessSide::WHITE));
         board[0][1] = std::make_unique<Spot>(Position(0, 1), new Knight(ChessSide::WHITE));
