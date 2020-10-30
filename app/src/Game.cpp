@@ -34,20 +34,27 @@ namespace Chess {
         this->board = board;
     }
 
+    Move *Game::getMove() const {
+        return move;
+    }
+
     void Game::run() {
     }
 
+    void Game::changeTurn()  {
+        currTurn = static_cast<ChessSide>(!static_cast<int>(currTurn));
+    }
+
+    //  return true if the piece that situated in the pos is belong to player that has currTurn
+//  return false on another side or if any piece does`t situated in the pos
     const bool &Game::isCurrTurn(const Position &pos) {
         if (auto piece = board->getSpot(pos)->getPiece(); piece) {
             return piece->getSide() == currTurn ? true : false;
         } else return false;
     }
 
-    Move *Game::getMove() const {
-        return move;
-    }
-
-    // getting current player king layout and checking it collision with opponents` pieces
+//  getting current player king layout and checking it collision with opponents` pieces
+//  if collision exist function return true and that means current player has a KingChecking
     bool Game::isCheck(const Position &kingPos) {
         auto opponentSide = (currTurn == ChessSide::WHITE) ? ChessSide::BLACK : ChessSide::WHITE;
         auto opponentPieces = board->getSpotsByChessSide(opponentSide);
@@ -56,35 +63,23 @@ namespace Chess {
             it->getPiece()->name();
             if (move->getMoveStatus(it->getPos(), kingPos) != MoveStatus::NotValid
                 && it->getPos() != kingPos) {
-//                std::cout << "Check" << std::endl;
                 return true;
             }
-//            std::cout << "not Check" << std::endl;
         }
         return false;
     }
 
-    bool Game::isCheck(const Position &kingPos, const Position &nextPos) {
-        auto opponentSide = (currTurn == ChessSide::WHITE) ? ChessSide::BLACK : ChessSide::WHITE;
-        auto opponentPieces = board->getSpotsByChessSide(opponentSide);
-        auto pieceInNextPos = board->getSpot(nextPos)->getPiece();
+//  previously changing piece in occupyPos spot to
+//  ally pawn that can be use as a defence instead opponent`s KingChecking.
+//  if using this substitution current player doesn`t get KingChecking
+//  he will continue his playing
+    bool Game::isCheck(const Position &kingPos, const Position &occupyPos) {
+        auto pieceInOccupyPos = board->getSpot(occupyPos)->getPiece();
 
-        board->getSpot(nextPos)->setPiece(new Pawn(currTurn));
-        for (const auto &it : opponentPieces) {
-            if (it->getPiece()->canMove(it->getPos(), kingPos, board) != MoveStatus::NotValid
-                && it->getPos() != kingPos) {
-//                std::cout << "Check" << std::endl;
-                board->getSpot(nextPos)->setPiece(pieceInNextPos);
-                return true;
-            }
-//            std::cout << "not Check" << std::endl;
-        }
-        board->getSpot(nextPos)->setPiece(pieceInNextPos);
-        return false;
-    }
-
-    void Game::changeTurn()  {
-        this->currTurn = (this->currTurn == ChessSide::WHITE) ? ChessSide::BLACK : ChessSide::WHITE;
+        board->getSpot(occupyPos)->setPiece(new Pawn(currTurn));
+        auto checkStatus = isCheck(kingPos);
+        board->getSpot(occupyPos)->setPiece(pieceInOccupyPos);
+        return checkStatus;
     }
 
     void Game::addMoveToHistory(const std::pair<Position, Position> &movePosition) {
@@ -93,25 +88,28 @@ namespace Chess {
 
     bool Game::isCheckmate() {
         auto currKing = board->getSpot(Chess::Types::King, currTurn);
-        auto currPos = currKing->getPos();
-        auto pos = currKing->getPiece()->getAvailibleMoves(currKing->getPos(), board);
+        auto currKingPos = currKing->getPos();
+        auto pos = currKing->getPiece()->getAvailableMoves(currKing->getPos(), board);
 
-        // isn`t checkmate if king has a move
+        // isn`t checkmate if king has a available movement
         for (const auto &it : pos) {
-            move->changePosition(currKing->getPos(), it);
-            if (!isCheck(it)) {
-                move->changePosition(it, currKing->getPos());
-//                currKing->setPiece(kingPiece);
+            move->changePosition(currKingPos, it);
+            auto checkStatus = isCheck(it);
+            move->changePosition(it, currKingPos);
+            if (!checkStatus) {
                 return false;
-            }
-            move->changePosition(it, currKing->getPos());
+            } else continue;
         }
+
+//      checking on allied pieces to defend against KingChecking
+//      receive availablePoses to move for every allied pieces
+//      and check all of them on defending in func isCheck
         auto currPieces = board->getSpotsByChessSide(currTurn);
         for (const auto & spot : currPieces) {
             if (spot != currKing) {
-                pos = spot->getPiece()->getAvailibleMoves(spot->getPos(), board);
+                pos = spot->getPiece()->getAvailableMoves(spot->getPos(), board);
                 for (const auto &it : pos) {
-                    if (!isCheck(currKing->getPos(), it))
+                    if (!isCheck(currKingPos, it))
                         return false;
                 }
             }
@@ -119,6 +117,10 @@ namespace Chess {
         return true;
     }
 
+//  Function returns different GameStatuses dependent on Poses and make pieces change position
+//  if it's possible dependent on moveStrategy, kingChecking, and etc.
+//  TODO: this func requires to be refactor (a lot of code repeating and etc);
+//        (optional) adding move history and then realisation of redo/undo funcs;
     const GameStatus &Game::makeMove(const Position &currPos, const Position &nextPos) {
         if (currPos != nextPos) {
             if (auto moveStatus = move->getMoveStatus(currPos, nextPos); moveStatus != MoveStatus::NotValid) {
@@ -169,8 +171,7 @@ namespace Chess {
                         }
                         return GameStatus::KingCheck;
                     }
-//                    board->getSpot(nextPos)->pawnPromotion();
-                    board->getSpot(nextPos)->setPiece(new Queen(currTurn));
+                    board->getSpot(nextPos)->pawnPromotion();
                     board->getSpot(nextPos)->getPiece()->setHasMoved();
                     changeTurn();
                     if (isCheckmate()) {

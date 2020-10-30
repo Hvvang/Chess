@@ -36,17 +36,17 @@ namespace Chess {
         [[nodiscard]] Move *getMove() const;
 
         void setBoard(Board *board);
-        bool isCheck(const Position &kingPos);
-        bool isCheck(const Position &kingPos, const Position &nextPos);
-        bool isCheckmate();
         void run();
         const bool &isCurrTurn(const Position &pos);
-        void changeTurn();
 
         const GameStatus & makeMove(const Position &currPos, const Position &nextPos);
 
 
     private:
+        bool isCheckmate();
+        bool isCheck(const Position &kingPos);
+        bool isCheck(const Position &kingPos, const Position &occupyPos);
+        void changeTurn();
         void addMoveToHistory(const std::pair<Position, Position> &move);
 
     private:

@@ -67,7 +67,7 @@ namespace Chess {
         return type;
     }
 
-    std::vector<Position> Piece::getAvailibleMoves(const Position &currPos, Board *board) {
+    std::vector<Position> Piece::getAvailableMoves(const Position &currPos, Board *board) {
         std::vector<Position> availableMoves;
 
         for (const auto &spots : board->getBoard()) {

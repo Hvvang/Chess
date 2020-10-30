@@ -54,7 +54,7 @@ namespace Chess {
 
         virtual MoveStatus canMove(const Position &currPos, const Position &nextPos, Board *board);
         virtual void name() = 0;
-        virtual std::vector<Position> getAvailibleMoves(const Position &currPos, Board *board);
+        virtual std::vector<Position> getAvailableMoves(const Position &currPos, Board *board);
 
         virtual MoveStatus checkCollision(const Position &currPos, const Position &nextPos, const Board *board);
         virtual MoveStatus moveStrategy(const Position &currPos, const Position &nextPos, const Board *board) = 0;

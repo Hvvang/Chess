@@ -156,7 +156,7 @@ sf::Vector2f Render::toVector(Chess::Position cords) const {
 
 void Render::drawPossibleMoves(const Chess::Position &pos) {
     const auto board = game->getBoard();
-    const auto &availiblePos = board->getSpot(pos)->getPiece()->getAvailibleMoves(pos, board);
+    const auto &availablePos = board->getSpot(pos)->getPiece()->getAvailableMoves(pos, board);
     sf::RectangleShape possibleMove;
 
     possibleMove.setSize(spotSize);
@@ -164,7 +164,7 @@ void Render::drawPossibleMoves(const Chess::Position &pos) {
     possibleMove.setOutlineColor(sf::Color(255, 255, 0));
     possibleMove.setOutlineThickness(-5);
 
-    for (const auto &it : availiblePos) {
+    for (const auto &it : availablePos) {
         possibleMove.setPosition(toVector(it));
         window.draw(possibleMove);
     }
