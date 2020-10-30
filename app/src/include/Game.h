@@ -13,6 +13,8 @@ namespace Chess {
     enum class GameStatus {
         Default,
         KingCheck,
+        KingCheckMate,
+        KingStaleMate,
         KillMove,
         PawnPromotion,
         DoesntMove,
@@ -35,6 +37,7 @@ namespace Chess {
 
         void setBoard(Board *board);
         bool isCheck(const Position &kingPos);
+        bool isCheck(const Position &kingPos, const Position &nextPos);
         bool isCheckmate();
         void run();
         const bool &isCurrTurn(const Position &pos);

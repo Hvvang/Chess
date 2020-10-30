@@ -3,6 +3,7 @@
 //
 
 #include "Spot.h"
+#include "Queen.h"
 
 namespace Chess {
     Spot::Spot(const Position &pos, Piece *piece)
@@ -21,5 +22,9 @@ namespace Chess {
 
     void Spot::setPiece(Piece *piece) {
         Spot::piece = piece;
+    }
+
+    void Spot::pawnPromotion() {
+        piece = new Queen(piece->getSide());
     }
 }

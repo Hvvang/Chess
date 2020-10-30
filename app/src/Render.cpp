@@ -74,7 +74,6 @@ void Render::draw() {
                         for (const auto & figure : figures) {
                             if (figure->getGlobalBounds().contains(mousePos.x, mousePos.y)) {
                                 if (game->isCurrTurn(toPosition(figure->getPosition()))) {
-                                    std::cout << "ok\n";
                                     n = figure.get();
                                     isMove = true;
                                     window.clear();
@@ -110,6 +109,13 @@ void Render::draw() {
                             updatePiecesPosition();
                             window.display();
                         }
+                        if (gameStatus == Chess::GameStatus::KingCheckMate) {
+                            window.clear();
+                            window.draw(*board);
+                            updatePiecesPosition();
+                            gameOver();
+                            window.display();
+                        }
                     }
                 }
             }
@@ -136,6 +142,7 @@ void Render::gameOver() {
     text.setCharacterSize(60);
     text.setFillColor(sf::Color(0, 0, 0));
     text.setPosition(spotSize.x * 2.5, spotSize.y * 4);
+    window.draw(text);
 }
 
 Chess::Position Render::toPosition(sf::Vector2f cords) const {

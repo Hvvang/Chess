@@ -10,21 +10,35 @@ namespace Chess {
             : Piece(side, Types::Pawn) {}
 
     MoveStatus Pawn::moveStrategy(const Position &currPos, const Position &nextPos, const Board *board) {
-        auto deltaY = nextPos.first - currPos.first;
+//      deltaX - movement`s offset by Y coordinate
+//      deltaY - movement`s offset by X coordinate
         auto deltaX = nextPos.second - currPos.second;
+        auto deltaY = nextPos.first - currPos.first;
 
+//      disable movement if offset more than:
+//          2 spots forward or backward,
+//          1 spot left or right,
+//          1 spot by diagonal move
         if (abs(deltaX) > 1 || abs(deltaY) > 2 || abs(deltaX) * abs(deltaY) > 1) {
             return MoveStatus::NotValid;
         }
+//      disable movement 2 spots forward if pawn doesn't stand in 2nd row
         if (!(currPos.first == 1 || currPos.first == 6) && abs(deltaY) == 2) {
             return MoveStatus::NotValid;
         }
+//      disable movement backward
         if ((this->getSide() == ChessSide::WHITE && deltaY > 0)
             || (this->getSide() == ChessSide::BLACK && deltaY < 0)) {
+//          disable diagonal movement if spot to move is empty from opposite player piece
             if (abs(deltaX) == abs(deltaY) == 1 && !board->getSpot(nextPos)->getPiece()) {
                 return MoveStatus::NotValid;
             }
-            return checkCollision(currPos, nextPos, board);
+            auto collision = checkCollision(currPos, nextPos, board);
+//          check on pawn promotion (when pawn comes to the end of the bord)
+            if (collision != MoveStatus::NotValid
+                && (nextPos.first == 0 || nextPos.first == 7))
+                return MoveStatus::PawnPromotion;
+            return collision;
         } else return MoveStatus::NotValid;
     }
 
