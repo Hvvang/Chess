@@ -13,6 +13,8 @@
 #include "Queen.h"
 #include "Rock.h"
 
+//  TODO: add unit_tests for checking different pieces moveStrategy
+
 namespace Chess {
 
     Board::Board() {
@@ -65,10 +67,13 @@ namespace Chess {
         return this->board;
     }
 
+//  returns Spot that situated in the pos
     Spot *Board::getSpot(const Position &pos) const {
         return this->board[pos.first][pos.second].get();
     }
 
+//  returns Spot that contains pieces of chess Type = type and chessSide = side
+//  or nullptr if not found
     Spot *Board::getSpot(const Types &type, const ChessSide &side) {
         for (const auto &it : board) {
             for (const auto &spot : it) {
@@ -80,8 +85,10 @@ namespace Chess {
                 }
             }
         }
+        return nullptr;
     }
 
+//  returns a vector of all found Spot that contains pieces of chessSide = side
     std::vector<Spot *> Board::getSpotsByChessSide(const ChessSide &side) {
         std::vector<Spot *> spots;
         for (const auto &it : board) {
