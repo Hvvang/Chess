@@ -46,18 +46,16 @@ namespace Chess {
 
         [[nodiscard]] const Types &getType() const;
         [[nodiscard]] const ChessSide &getSide() const;
-        [[nodiscard]] const bool &isKilled() const;
+        bool isMoved() const;
 
-        void setDeath(const bool &death = true);
         void setHasMoved(const bool &hasMoved = true);
-        bool isHasMoved() const;
 
-        virtual MoveStatus canMove(const Position &currPos, const Position &nextPos, Board *board);
-        virtual void name() = 0;
         virtual std::vector<Position> getAvailableMoves(const Position &currPos, Board *board);
-
-        virtual MoveStatus checkCollision(const Position &currPos, const Position &nextPos, const Board *board);
         virtual MoveStatus moveStrategy(const Position &currPos, const Position &nextPos, const Board *board) = 0;
+        virtual void name() = 0;
+
+    protected:
+        virtual MoveStatus checkCollision(const Position &currPos, const Position &nextPos, const Board *board);
 
     private:
         Position getDirection(const int &deltaX, const int &deltaY);
@@ -65,8 +63,7 @@ namespace Chess {
     private:
         const Types type;
         const ChessSide side;
-        bool death = false;
-        bool hasMoved = false;
+        bool Moved = false;
     };
 }
 

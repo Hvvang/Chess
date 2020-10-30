@@ -17,31 +17,20 @@ namespace Chess {
         return side;
     };
 
-    const bool &Piece::isKilled() const {
-        return death;
-    };
-
-    void Piece::setDeath(const bool &death) {
-        this->death = death;
-    }
-
-    MoveStatus Piece::canMove(const Position &currPos, const Position &nextPos, Board *board) {
-        return moveStrategy(currPos, nextPos, board);
-    }
 
     Position Piece::getDirection(const int &deltaX, const int &deltaY) {
         if (deltaX && deltaY) {
             return { deltaY / abs(deltaY), deltaX / abs(deltaX) };
         }
         else {
-            if (!deltaY) {
-                return { 0, deltaX / abs(deltaX) };
-            } else {
-                return { deltaY / abs(deltaY), 0 };
-            }
+            return (!deltaY) ? { 0, deltaX / abs(deltaX) } : { deltaY / abs(deltaY), 0 };
         }
     }
 
+//  returns MoveStatus after detection collision with other chess pieces:
+//  if between currPos and nextPos is any piece, of if in spot with position equal
+//  nextPos is ally piece we detect collision and so movement can`t be made
+//  on another side movement can be made
     MoveStatus Piece::checkCollision(const Position &currPos, const Position &nextPos, const Board *board) {
         auto deltaY = nextPos.first - currPos.first;
         auto deltaX = nextPos.second - currPos.second;
@@ -67,13 +56,16 @@ namespace Chess {
         return type;
     }
 
+//  returns a vector of position where current piece can move
+//  checking on current piece can move to all board spots:
+//  if true - adding pos of spot to vector, else - skip
     std::vector<Position> Piece::getAvailableMoves(const Position &currPos, Board *board) {
         std::vector<Position> availableMoves;
 
         for (const auto &spots : board->getBoard()) {
             for (const auto &it : spots) {
                 if (currPos != it->getPos())
-                    if (canMove(currPos, it->getPos(), board) != MoveStatus::NotValid) {
+                    if (moveStrategy(currPos, it->getPos(), board) != MoveStatus::NotValid) {
                         availableMoves.push_back(it->getPos());
                     }
             }
@@ -81,11 +73,11 @@ namespace Chess {
         return availableMoves;
     }
 
-    bool Piece::isHasMoved() const {
-        return hasMoved;
+    bool Piece::isMoved() const {
+        return Moved;
     }
 
     void Piece::setHasMoved(const bool &hasMoved) {
-        Piece::hasMoved = hasMoved;
+        Piece::Moved = hasMoved;
     }
 }

@@ -143,7 +143,7 @@ namespace Chess {
                     auto rockSpot = board->getSpot(Position(currPos.first, nextPos.second == 2 ? 0 : 7));
                     auto rockPiece = rockSpot->getPiece();
 
-                    if (rockPiece && rockPiece->getType() == Types::Rock && !rockPiece->isHasMoved()) {
+                    if (rockPiece && rockPiece->getType() == Types::Rock && !rockPiece->isMoved()) {
                         auto rockPosAfterCastling = Position(currPos.first, nextPos.second == 2 ? 3 : 5);
 
                         if (isCheck(currPos) || isCheck(rockPosAfterCastling) || isCheck(nextPos)) {

@@ -15,7 +15,7 @@ namespace Chess {
 
         // check on king castling
         if ((abs(deltaX) <= 1 && abs(deltaY) <= 1)
-            || (!isHasMoved() && abs(deltaY) == 2 && !abs(deltaX))) {
+            || (!isMoved() && abs(deltaY) == 2 && !abs(deltaX))) {
             auto collision = checkCollision(currPos, nextPos, board);
             if (collision == MoveStatus::Default && abs(deltaY) == 2) {
                 return MoveStatus::Castle;
