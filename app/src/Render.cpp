@@ -10,7 +10,7 @@
 
 Render::Render(sf::RenderWindow &window)
         : window(window)
-        , game(new Chess::Game({Chess::Player(Chess::ChessSide::WHITE), Chess::Player(Chess::ChessSide::BLACK)})){
+        , game(new Chess::Game({Chess::Player(Chess::ChessSide::WHITE, "White player"), Chess::Player(Chess::ChessSide::BLACK, "Black player")})){
     font.loadFromFile("sansation.ttf");
 }
 
@@ -59,8 +59,11 @@ void Render::draw() {
     for (const auto &figure : figures) {
         window.draw(*figure);
     }
+    renderCheckStatus(Chess::GameStatus::Default);
     window.display();
 
+
+//    TODO: this func requires to be refactored (a lot of code repeating and etc);
     while (window.isOpen()) {
         sf::Vector2i mousePos = sf::Mouse::getPosition(window);
         sf::Event event;
@@ -84,6 +87,8 @@ void Render::draw() {
                                     rect.setPosition(figure->getPosition());
                                     window.draw(rect);
                                     drawPossibleMoves(toPosition(n->getPosition()));
+                                    auto checkStatus = game->getCheckStatus();
+                                    renderCheckStatus(Chess::GameStatus::Default);
                                     window.display();
                                 } else
                                     std::cout << "Opponent`s move\n";
@@ -93,28 +98,21 @@ void Render::draw() {
                     } else {
                         auto newPos = 100.f * sf::Vector2f(event.mouseButton.x / 100, event.mouseButton.y / 100);
                         auto gameStatus = game->makeMove(toPosition(n->getPosition()), toPosition(newPos));
-                        if (gameStatus == Chess::GameStatus::Default
-                            || gameStatus == Chess::GameStatus::KillMove
-                            || gameStatus == Chess::GameStatus::Castle) {
+
+                        if (gameStatus == Chess::GameStatus::Default ||
+                            gameStatus == Chess::GameStatus::Castle ||
+                            gameStatus == Chess::GameStatus::KingCheck ||
+                            gameStatus == Chess::GameStatus::DoesntMove) {
                             isMove = false;
                             window.clear();
                             window.draw(*board);
                             updatePiecesPosition();
+                            auto checkStatus = game->getCheckStatus();
+                            renderCheckStatus(checkStatus);
                             window.display();
                         }
-                        if (gameStatus == Chess::GameStatus::KingCheck || gameStatus == Chess::GameStatus::DoesntMove) {
-                            isMove = false;
-                            window.clear();
-                            window.draw(*board);
-                            updatePiecesPosition();
-                            window.display();
-                        }
-                        if (gameStatus == Chess::GameStatus::KingCheckMate) {
-                            window.clear();
-                            window.draw(*board);
-                            updatePiecesPosition();
-                            gameOver();
-                            window.display();
+                        if (gameStatus == Chess::GameStatus::KingCheck) {
+
                         }
                     }
                 }
@@ -192,6 +190,24 @@ void Render::updatePiecesPosition() {
             }
         }
     }
+}
+
+void Render::renderCheckStatus(const Chess::GameStatus &checkStatus) {
+    std::string str = game->getCurrPlayer().getName();
+    if (checkStatus == Chess::GameStatus::KingCheck) {
+        str += " get king check";
+    } else if (checkStatus == Chess::GameStatus::KingStaleMate) {
+        str += " lose because of stalemate";
+    } else if (checkStatus == Chess::GameStatus::KingCheckMate) {
+        str += " lose because of checkmate";
+    } else if (checkStatus == Chess::GameStatus::Default) {
+        str += " turn";
+    }
+    sf::Text text(str, font);
+    text.setCharacterSize(32);
+    text.setFillColor(sf::Color(255, 0, 0));
+    text.setPosition(spotSize.x * 9, spotSize.y);
+    window.draw(text);
 }
 
 

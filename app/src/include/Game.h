@@ -15,8 +15,6 @@ namespace Chess {
         KingCheck,
         KingCheckMate,
         KingStaleMate,
-        KillMove,
-        PawnPromotion,
         DoesntMove,
         InvalidMove,
         Castle,
@@ -31,6 +29,7 @@ namespace Chess {
         ~Game() = default;
 
         [[nodiscard]] const Players &getPlayers() const;
+        [[nodiscard]] const Player &getCurrPlayer() const;
         [[nodiscard]] Board *getBoard() const;
         [[nodiscard]] const ChessSide &getCurrTurn() const;
         [[nodiscard]] Move *getMove() const;
@@ -39,13 +38,13 @@ namespace Chess {
         void run();
         const bool &isCurrTurn(const Position &pos);
 
-        const GameStatus & makeMove(const Position &currPos, const Position &nextPos);
-
+        const GameStatus makeMove(const Position &currPos, const Position &nextPos);
+        GameStatus getCheckStatus();
 
     private:
         bool isCheckmate();
+        bool isCheck();
         bool isCheck(const Position &kingPos);
-        bool isCheck(const Position &kingPos, const Position &occupyPos);
         void changeTurn();
         void addMoveToHistory(const std::pair<Position, Position> &move);
 

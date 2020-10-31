@@ -53,6 +53,11 @@ namespace Chess {
         } else return false;
     }
 
+    bool Game::isCheck() {
+        auto kingPos = board->getSpot(Types::King, currTurn)->getPos();
+        return isCheck(kingPos);
+    }
+
 //  getting current player king layout and checking it collision with opponents` pieces
 //  if collision exist function return true and that means current player has a KingChecking
     bool Game::isCheck(const Position &kingPos) {
@@ -60,26 +65,12 @@ namespace Chess {
         auto opponentPieces = board->getSpotsByChessSide(opponentSide);
 
         for (const auto &it : opponentPieces) {
-            it->getPiece()->name();
             if (move->getMoveStatus(it->getPos(), kingPos) != MoveStatus::NotValid
                 && it->getPos() != kingPos) {
                 return true;
             }
         }
         return false;
-    }
-
-//  previously changing piece in occupyPos spot to
-//  ally pawn that can be use as a defence instead opponent`s KingChecking.
-//  if using this substitution current player doesn`t get KingChecking
-//  he will continue his playing
-    bool Game::isCheck(const Position &kingPos, const Position &occupyPos) {
-        auto pieceInOccupyPos = board->getSpot(occupyPos)->getPiece();
-
-        board->getSpot(occupyPos)->setPiece(new Pawn(currTurn));
-        auto checkStatus = isCheck(kingPos);
-        board->getSpot(occupyPos)->setPiece(pieceInOccupyPos);
-        return checkStatus;
     }
 
     void Game::addMoveToHistory(const std::pair<Position, Position> &movePosition) {
@@ -93,9 +84,11 @@ namespace Chess {
 
         // isn`t checkmate if king has a available movement
         for (const auto &it : pos) {
+            auto pieceInNextPos = board->getSpot(it)->getPiece();
             move->changePosition(currKingPos, it);
-            auto checkStatus = isCheck(it);
+            auto checkStatus = isCheck(currKingPos);
             move->changePosition(it, currKingPos);
+            board->getSpot(it)->setPiece(pieceInNextPos);
             if (!checkStatus) {
                 return false;
             } else continue;
@@ -109,8 +102,14 @@ namespace Chess {
             if (spot != currKing) {
                 pos = spot->getPiece()->getAvailableMoves(spot->getPos(), board);
                 for (const auto &it : pos) {
-                    if (!isCheck(currKingPos, it))
+                    auto pieceInNextPos = board->getSpot(it)->getPiece();
+                    move->changePosition(spot->getPos(), it);
+                    auto checkStatus = isCheck();
+                    move->changePosition(it, spot->getPos());
+                    board->getSpot(it)->setPiece(pieceInNextPos);
+                    if (!checkStatus) {
                         return false;
+                    } else continue;
                 }
             }
         }
@@ -119,67 +118,70 @@ namespace Chess {
 
 //  Function returns different GameStatuses dependent on Poses and make pieces change position
 //  if it's possible dependent on moveStrategy, kingChecking, and etc.
-//  TODO: this func requires to be refactor (a lot of code repeating and etc);
-//        (optional) adding move history and then realisation of redo/undo funcs;
-    const GameStatus &Game::makeMove(const Position &currPos, const Position &nextPos) {
+//  TODO: add game status and movement log;
+//        (optional) adding move history and then implementation of redo/undo funcs;
+    const GameStatus Game::makeMove(const Position &currPos, const Position &nextPos) {
         if (currPos != nextPos) {
             if (auto moveStatus = move->getMoveStatus(currPos, nextPos); moveStatus != MoveStatus::NotValid) {
-                if (moveStatus == MoveStatus::Default || moveStatus == MoveStatus::KillMove) {
-                    auto pieceInNextPos = board->getSpot(nextPos)->getPiece();
-                    move->changePosition(currPos, nextPos);
-                    if (auto kingPos = board->getSpot(Types::King, currTurn)->getPos(); isCheck(kingPos)) {
-                        move->changePosition(nextPos, currPos);
-                        board->getSpot(nextPos)->setPiece(pieceInNextPos);
-                        if (isCheckmate()) {
-                            return isCheck(kingPos) ? GameStatus::KingCheckMate : GameStatus::KingStaleMate;
-                        }
-                        return GameStatus::KingCheck;
-                    }
-                    board->getSpot(nextPos)->getPiece()->setHasMoved();
-                    changeTurn();
-                    return GameStatus::Default;
+                auto status = GameStatus::Default;
+                auto pieceInNextPos = board->getSpot(nextPos)->getPiece();
+                move->changePosition(currPos, nextPos);
+
+                if (isCheck()) {
+                    status = GameStatus::KingCheck;
                 }
-                else if (moveStatus == MoveStatus::Castle) {
+
+                if (moveStatus == MoveStatus::Castle && status != GameStatus::KingCheck) {
                     auto rockSpot = board->getSpot(Position(currPos.first, nextPos.second == 2 ? 0 : 7));
                     auto rockPiece = rockSpot->getPiece();
 
                     if (rockPiece && rockPiece->getType() == Types::Rock && !rockPiece->isMoved()) {
                         auto rockPosAfterCastling = Position(currPos.first, nextPos.second == 2 ? 3 : 5);
 
-                        if (isCheck(currPos) || isCheck(rockPosAfterCastling) || isCheck(nextPos)) {
-                            if (isCheckmate()) {
-                                return GameStatus::KingCheckMate;
-                            }
-                            return GameStatus::InvalidCastle;
+                        if (isCheck(currPos) || isCheck(rockPosAfterCastling)) {
+                            status = GameStatus::InvalidCastle;
+                        } else {
+                            move->changePosition(rockSpot->getPos(), rockPosAfterCastling);
+                            rockPiece->setHasMoved();
+                            status = GameStatus::Castle;
                         }
-                        move->changePosition(currPos, nextPos);
-                        move->changePosition(rockSpot->getPos(), rockPosAfterCastling);
-                        rockPiece->setHasMoved();
-                        board->getSpot(nextPos)->getPiece()->setHasMoved();
-                        changeTurn();
-                        if (isCheckmate())
-                            return GameStatus::KingCheckMate;
-                        return GameStatus::Castle;
-                    } else return GameStatus::InvalidCastle;
-                }
-                else if (moveStatus == MoveStatus::PawnPromotion) {
-                    move->changePosition(currPos, nextPos);
-                    if (auto kingPos = board->getSpot(Types::King, currTurn); isCheck(kingPos->getPos())) {
-                        move->changePosition(nextPos, currPos);
-                        if (isCheckmate()) {
-                            return GameStatus::KingCheckMate;
-                        }
-                        return GameStatus::KingCheck;
+                    } else {
+                        status = GameStatus::InvalidCastle;
                     }
+                }
+
+                else if (moveStatus == MoveStatus::PawnPromotion && status != GameStatus::KingCheck) {
                     board->getSpot(nextPos)->pawnPromotion();
+                }
+
+                if (status == GameStatus::KingCheck || status == GameStatus::InvalidCastle) {
+                    move->changePosition(nextPos, currPos);
+                    board->getSpot(nextPos)->setPiece(pieceInNextPos);
+                } else {
                     board->getSpot(nextPos)->getPiece()->setHasMoved();
                     changeTurn();
-                    if (isCheckmate()) {
-                        return GameStatus::KingCheckMate;
-                    }
-                    return GameStatus::Default;
                 }
+                return status;
             } else return GameStatus::InvalidMove;
         } else return GameStatus::DoesntMove;
+    }
+
+    GameStatus Game::getCheckStatus()  {
+        auto checkStatus = isCheck();
+        auto checkmateStatus = isCheckmate();
+
+        if (checkStatus && !checkmateStatus) {
+            return GameStatus::KingCheck;
+        } else if (!checkStatus && checkmateStatus) {
+            return GameStatus::KingStaleMate;
+        } else if (checkStatus && checkmateStatus) {
+            return GameStatus::KingCheckMate;
+        } else {
+            return GameStatus::Default;
+        }
+    }
+
+    const Player &Game::getCurrPlayer() const {
+        return (players.first.getSide() == currTurn) ? players.first : players.second;
     }
 }

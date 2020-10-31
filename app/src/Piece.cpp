@@ -23,7 +23,8 @@ namespace Chess {
             return { deltaY / abs(deltaY), deltaX / abs(deltaX) };
         }
         else {
-            return (!deltaY) ? { 0, deltaX / abs(deltaX) } : { deltaY / abs(deltaY), 0 };
+
+            return (!deltaY) ? Position(0, deltaX / abs(deltaX)) : Position(deltaY / abs(deltaY), 0);
         }
     }
 
