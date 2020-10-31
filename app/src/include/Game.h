@@ -15,11 +15,14 @@ namespace Chess {
         KingCheck,
         KingCheckMate,
         KingStaleMate,
-        DoesntMove,
         InvalidMove,
         Castle,
-        InvalidCastle
-    };
+        InvalidCastle,
+        PieceAnotherPlayer,
+        PieceSelected,
+        PieceUnSelected,
+        PieceNotSelected
+};
 
     using Players = std::pair<Player, Player>;
 
@@ -36,9 +39,9 @@ namespace Chess {
 
         void setBoard(Board *board);
         void run();
-        const bool &isCurrTurn(const Position &pos);
+        bool isCurrPlayerPiece(const Position &pos);
 
-        const GameStatus makeMove(const Position &currPos, const Position &nextPos);
+        GameStatus makeMove(const Position &toPos);
         GameStatus getCheckStatus();
 
     private:
@@ -50,7 +53,8 @@ namespace Chess {
 
     private:
         Players players;
-        ChessSide currTurn;
+        ChessSide currTurn = ChessSide::WHITE;
+        Spot *currPieceSpot = nullptr;
         Board *board;
         Move *move;
         std::vector<std::pair<Position, Position>> movesHistory;

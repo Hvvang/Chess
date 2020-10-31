@@ -15,7 +15,7 @@ namespace Chess {
         Move(Board *board);
         ~Move() = default;
 
-        const MoveStatus &getMoveStatus(const Position &currPos, const Position &nextPos) const;
+        const MoveStatus getMoveStatus(const Position &currPos, const Position &nextPos) const;
 
         void changePosition(const Position &currPos, const Position &nextPos);
 

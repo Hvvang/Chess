@@ -21,6 +21,7 @@ namespace Chess {
     enum class ChessSide;
     class Piece;
     class Spot;
+
     class Board final {
     public:
         Board();
@@ -32,10 +33,10 @@ namespace Chess {
         Spot *getSpot(const Types &type, const ChessSide &side);
         std::vector<Spot *> getSpotsByChessSide(const ChessSide &side);
         [[nodiscard]] Spot *getSpot(const Position &pos) const;
-        [[nodiscard]] Field<std::unique_ptr<Spot>> &getBoard();
+        [[nodiscard]] Field<std::unique_ptr<Spot>> &getField();
 
     private:
-        Field<std::unique_ptr<Spot>> board;
+        Field<std::unique_ptr<Spot>> field;
     };
 
 }

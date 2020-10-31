@@ -58,12 +58,12 @@ namespace Chess {
     }
 
 //  returns a vector of position where current piece can move
-//  checking on current piece can move to all board spots:
+//  checking on current piece can move to all field spots:
 //  if true - adding pos of spot to vector, else - skip
     std::vector<Position> Piece::getAvailableMoves(const Position &currPos, Board *board) {
         std::vector<Position> availableMoves;
 
-        for (const auto &spots : board->getBoard()) {
+        for (const auto &spots : board->getField()) {
             for (const auto &it : spots) {
                 if (currPos != it->getPos())
                     if (moveStrategy(currPos, it->getPos(), board) != MoveStatus::NotValid) {

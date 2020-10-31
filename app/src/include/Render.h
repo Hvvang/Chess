@@ -24,17 +24,17 @@ public:
     void renderCheckStatus(const Chess::GameStatus &checkStatus);
 
     void updatePiecesPosition();
+    void drawInfoPanel();
+    void drawMessageInLog(const std::string &message);
     void drawPossibleMoves(const Chess::Position &pos);
 
     void clearFigures();
     void removeFigure(std::unique_ptr<sf::Sprite> *figure);
 
-    Chess::Position toPosition(sf::Vector2f cords) const;
-    sf::Vector2f toVector(Chess::Position cords) const;
+    Chess::Position toPosition(const sf::Vector2f &cords) const;
+    sf::Vector2f toVector(const Chess::Position &cords) const;
 
-    [[nodiscard]] sf::RenderWindow &getWindow() const;
     [[nodiscard]] const std::unique_ptr<sf::Sprite> &getBoard() const;
-    [[nodiscard]] const std::unique_ptr<sf::Sprite> *getFigures() const;
 
 //private:
 //    void takePiece(std::unique_ptr<sf::Sprite> *figure);
@@ -49,7 +49,7 @@ private:
     sf::Vector2f figureSize;
     Chess::Game *game;
     std::unique_ptr<sf::Sprite> board;
-    std::unique_ptr<sf::Sprite> figures[32];
+    std::vector<std::unique_ptr<sf::Sprite>> figures;
 };
 
 

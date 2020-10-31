@@ -2,17 +2,13 @@
 // Created by Artem Shemidko on 19.10.2020.
 //
 
-#include <Pawn.h>
-#include <King.h>
-#include <Queen.h>
 #include "Game.h"
 #include "Board.h"
 
 namespace Chess {
     Game::Game(Players players)
         : board(new Board())
-        , move(new Move(board))
-        , currTurn(ChessSide::WHITE) {
+        , move(new Move(board)) {
         this->currTurn = ChessSide::WHITE;
         this->players = std::move(players);
         this->board->initBoard();
@@ -30,8 +26,8 @@ namespace Chess {
         return currTurn;
     }
 
-    void Game::setBoard(Board *board) {
-        this->board = board;
+    void Game::setBoard(Board *boardObj) {
+        this->board = boardObj;
     }
 
     Move *Game::getMove() const {
@@ -45,12 +41,11 @@ namespace Chess {
         currTurn = static_cast<ChessSide>(!static_cast<int>(currTurn));
     }
 
-    //  return true if the piece that situated in the pos is belong to player that has currTurn
+//  return true if the piece that situated in the pos is belong to player that has currTurn
 //  return false on another side or if any piece does`t situated in the pos
-    const bool &Game::isCurrTurn(const Position &pos) {
-        if (auto piece = board->getSpot(pos)->getPiece(); piece) {
-            return piece->getSide() == currTurn ? true : false;
-        } else return false;
+    bool Game::isCurrPlayerPiece(const Position &pos) {
+        auto piece = board->getSpot(pos)->getPiece();
+        return piece && piece->getSide() == currTurn;
     }
 
     bool Game::isCheck() {
@@ -65,11 +60,15 @@ namespace Chess {
         auto opponentPieces = board->getSpotsByChessSide(opponentSide);
 
         for (const auto &it : opponentPieces) {
+//            it->getPiece()->name();
+//            std::cout << it->getPos().second << " " << it->getPos().first << std::endl;
+
             if (move->getMoveStatus(it->getPos(), kingPos) != MoveStatus::NotValid
                 && it->getPos() != kingPos) {
                 return true;
             }
         }
+//        std::cout << "go back\n";
         return false;
     }
 
@@ -86,7 +85,7 @@ namespace Chess {
         for (const auto &it : pos) {
             auto pieceInNextPos = board->getSpot(it)->getPiece();
             move->changePosition(currKingPos, it);
-            auto checkStatus = isCheck(currKingPos);
+            auto checkStatus = isCheck(it);
             move->changePosition(it, currKingPos);
             board->getSpot(it)->setPiece(pieceInNextPos);
             if (!checkStatus) {
@@ -120,23 +119,42 @@ namespace Chess {
 //  if it's possible dependent on moveStrategy, kingChecking, and etc.
 //  TODO: add game status and movement log;
 //        (optional) adding move history and then implementation of redo/undo funcs;
-    const GameStatus Game::makeMove(const Position &currPos, const Position &nextPos) {
-        if (currPos != nextPos) {
-            if (auto moveStatus = move->getMoveStatus(currPos, nextPos); moveStatus != MoveStatus::NotValid) {
-                auto status = GameStatus::Default;
-                auto pieceInNextPos = board->getSpot(nextPos)->getPiece();
-                move->changePosition(currPos, nextPos);
+    GameStatus Game::makeMove(const Position &toPos) {
+        auto spot = board->getSpot(toPos);
 
-                if (isCheck()) {
-                    status = GameStatus::KingCheck;
-                }
+        if (!currPieceSpot && spot->getPiece()) {
+            if (isCurrPlayerPiece(toPos)) {
+                currPieceSpot = spot;
+                return GameStatus::PieceSelected;
+            } else
+                return GameStatus::PieceAnotherPlayer;
+        } else if (!currPieceSpot && !spot->getPiece())
+            return GameStatus::PieceNotSelected;
 
-                if (moveStatus == MoveStatus::Castle && status != GameStatus::KingCheck) {
-                    auto rockSpot = board->getSpot(Position(currPos.first, nextPos.second == 2 ? 0 : 7));
+        auto currPos = currPieceSpot->getPos();
+        if (currPieceSpot->getPos() == toPos) {
+            currPieceSpot = nullptr;
+            return GameStatus::PieceUnSelected;
+        }
+
+        auto moveStatus = move->getMoveStatus(currPos, toPos);
+        if (moveStatus != MoveStatus::NotValid) {
+            auto status = GameStatus::Default;
+            auto pieceInNextPos = spot->getPiece();
+
+            move->changePosition(currPos, toPos);
+            if (isCheck())
+                status = GameStatus::KingCheck;
+
+            if (moveStatus == MoveStatus::Castle) {
+                if (status == GameStatus::KingCheck) {
+                    status = GameStatus::InvalidCastle;
+                } else {
+                    auto rockSpot = board->getSpot(Position(currPos.first, toPos.second == 2 ? 0 : 7));
                     auto rockPiece = rockSpot->getPiece();
 
                     if (rockPiece && rockPiece->getType() == Types::Rock && !rockPiece->isMoved()) {
-                        auto rockPosAfterCastling = Position(currPos.first, nextPos.second == 2 ? 3 : 5);
+                        auto rockPosAfterCastling = Position(currPos.first, toPos.second == 2 ? 3 : 5);
 
                         if (isCheck(currPos) || isCheck(rockPosAfterCastling)) {
                             status = GameStatus::InvalidCastle;
@@ -149,21 +167,23 @@ namespace Chess {
                         status = GameStatus::InvalidCastle;
                     }
                 }
+            } else if (moveStatus == MoveStatus::PawnPromotion && status != GameStatus::KingCheck) {
+                board->getSpot(toPos)->pawnPromotion();
+            }
 
-                else if (moveStatus == MoveStatus::PawnPromotion && status != GameStatus::KingCheck) {
-                    board->getSpot(nextPos)->pawnPromotion();
-                }
-
-                if (status == GameStatus::KingCheck || status == GameStatus::InvalidCastle) {
-                    move->changePosition(nextPos, currPos);
-                    board->getSpot(nextPos)->setPiece(pieceInNextPos);
-                } else {
-                    board->getSpot(nextPos)->getPiece()->setHasMoved();
-                    changeTurn();
-                }
-                return status;
-            } else return GameStatus::InvalidMove;
-        } else return GameStatus::DoesntMove;
+            if (status == GameStatus::KingCheck || status == GameStatus::InvalidCastle) {
+                move->changePosition(toPos, currPos);
+                board->getSpot(toPos)->setPiece(pieceInNextPos);
+            } else {
+                board->getSpot(toPos)->getPiece()->setHasMoved();
+                changeTurn();
+            }
+            currPieceSpot = nullptr;
+            return status;
+        } else {
+            currPieceSpot = nullptr;
+            return GameStatus::InvalidMove;
+        }
     }
 
     GameStatus Game::getCheckStatus()  {
@@ -174,7 +194,7 @@ namespace Chess {
             return GameStatus::KingCheck;
         } else if (!checkStatus && checkmateStatus) {
             return GameStatus::KingStaleMate;
-        } else if (checkStatus && checkmateStatus) {
+        } else if (checkStatus) {
             return GameStatus::KingCheckMate;
         } else {
             return GameStatus::Default;
