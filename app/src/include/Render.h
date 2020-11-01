@@ -14,6 +14,7 @@ class Render {
 
 public:
     Render(sf::RenderWindow &window);
+    ~Render();
 
     void initBoard(const std::string &fPath);
     void initFigures(const std::string &fPath);

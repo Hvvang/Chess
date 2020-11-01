@@ -14,6 +14,11 @@ namespace Chess {
         this->board->initBoard();
     }
 
+    Game::~Game() {
+        delete board;
+        delete move;
+    }
+
     const Players &Game::getPlayers() const {
         return players;
     }

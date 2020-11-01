@@ -9,7 +9,10 @@ namespace Chess {
     Spot::Spot(const Position &pos, Piece *piece)
         : pos(pos)
         , piece(piece) {
+    }
 
+    Spot::~Spot() {
+        delete piece;
     }
 
     const Position &Spot::getPos() const {

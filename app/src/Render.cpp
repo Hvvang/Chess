@@ -10,8 +10,13 @@
 
 Render::Render(sf::RenderWindow &window)
         : window(window)
-        , game(new Chess::Game({Chess::Player(Chess::ChessSide::WHITE, "White player"), Chess::Player(Chess::ChessSide::BLACK, "Black player")})){
+        , game(new Chess::Game({Chess::Player(Chess::ChessSide::WHITE, "White player"),
+                                Chess::Player(Chess::ChessSide::BLACK, "Black player")})){
     font.loadFromFile("sansation.ttf");
+}
+
+Render::~Render() {
+    delete game;
 }
 
 void Render::initBoard(const std::string &fPath) {

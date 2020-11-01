@@ -14,6 +14,7 @@ namespace Chess {
     class Spot {
     public:
         Spot(const Position &pos, Piece *piece = nullptr);
+        ~Spot();
 
         [[nodiscard]] const Position &getPos() const;
         [[nodiscard]] Piece *getPiece() const;
@@ -23,7 +24,6 @@ namespace Chess {
     private:
         const Position pos;
         Piece *piece;
-
     };
 }
 

@@ -12,6 +12,6 @@ int main() {
     r->initBoard("./board.png");
     r->initFigures("./figures.png");
     r->run();
-
+    delete r;
     return 0;
 }

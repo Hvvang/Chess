@@ -43,6 +43,7 @@ namespace Chess {
     class Piece {
     public:
         Piece(const ChessSide &side = ChessSide::WHITE, const Types &type = Types::Pawn);
+        ~Piece() = default;
 
         [[nodiscard]] const Types &getType() const;
         [[nodiscard]] const ChessSide &getSide() const;

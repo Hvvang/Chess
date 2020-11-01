@@ -29,7 +29,7 @@ namespace Chess {
     class Game {
     public:
         Game(Players players);
-        ~Game() = default;
+        ~Game();
 
         [[nodiscard]] const Players &getPlayers() const;
         [[nodiscard]] const Player &getCurrPlayer() const;
