@@ -4,6 +4,7 @@
 
 #include "Game.h"
 #include "Board.h"
+#include "Queen.h"
 
 namespace Chess {
     Game::Game(Players players)
@@ -183,7 +184,8 @@ namespace Chess {
                     }
                 }
             } else if (moveStatus == MoveStatus::PawnPromotion && status != GameStatus::KingCheck) {
-                board->getSpot(toPos)->pawnPromotion();
+                delete board->getSpot(toPos)->getPiece();
+                board->getSpot(toPos)->setPiece(new Queen(currTurn));
             }
 
             if (status == GameStatus::KingCheck || status == GameStatus::InvalidCastle) {
@@ -192,6 +194,7 @@ namespace Chess {
             } else {
                 board->getSpot(toPos)->getPiece()->setHasMoved();
                 addMoveToHistory({currPos, toPos});
+                delete pieceInNextPos;
                 changeTurn();
             }
             currPieceSpot = nullptr;
