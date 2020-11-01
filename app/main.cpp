@@ -4,7 +4,9 @@
 #include "Render.h"
 
 int main() {
-    sf::RenderWindow window(sf::VideoMode(1200, 800), "Chess");
+    sf::VideoMode desktop =  sf::VideoMode::getDesktopMode();
+    sf::RenderWindow window(sf::VideoMode(1200, 800, desktop.bitsPerPixel), "Chess", sf::Style::Titlebar | sf::Style::Close);
+    window.setFramerateLimit(60);
     auto *r = new Render(window);
 
     r->initBoard("./board.png");
