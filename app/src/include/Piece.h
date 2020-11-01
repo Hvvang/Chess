@@ -58,7 +58,7 @@ namespace Chess {
         virtual MoveStatus checkCollision(const Position &currPos, const Position &nextPos, const Board *board);
 
     private:
-        Position getDirection(const int &deltaX, const int &deltaY);
+        static Position getDirection(const int &deltaX, const int &deltaY);
 
     private:
         const Types type;

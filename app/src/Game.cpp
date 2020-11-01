@@ -34,7 +34,12 @@ namespace Chess {
         return move;
     }
 
-    void Game::run() {
+//  reset all data to start new game
+    void Game::reset() {
+        currTurn = ChessSide::WHITE;
+        currPieceSpot = nullptr;
+        board->reset();
+        movesHistory.clear();
     }
 
     void Game::changeTurn()  {
@@ -73,7 +78,12 @@ namespace Chess {
     }
 
     void Game::addMoveToHistory(const std::pair<Position, Position> &movePosition) {
-        movesHistory.push_back(movePosition);
+        std::string translate_from(1, toascii(movePosition.first.second + 'A'));
+        std::string translate_to(1, toascii(movePosition.second.second + 'A'));
+        translate_from += std::to_string(movePosition.first.first);
+        translate_to += std::to_string(movePosition.second.first);
+
+        movesHistory.push_back(translate_from + " " + translate_to);
     }
 
     bool Game::isCheckmate() {
@@ -176,6 +186,7 @@ namespace Chess {
                 board->getSpot(toPos)->setPiece(pieceInNextPos);
             } else {
                 board->getSpot(toPos)->getPiece()->setHasMoved();
+                addMoveToHistory({currPos, toPos});
                 changeTurn();
             }
             currPieceSpot = nullptr;
@@ -203,5 +214,8 @@ namespace Chess {
 
     const Player &Game::getCurrPlayer() const {
         return (players.first.getSide() == currTurn) ? players.first : players.second;
+    }
+    const std::vector<std::string> &Game::getMovesHistory() const {
+        return movesHistory;
     }
 }

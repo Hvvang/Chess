@@ -14,6 +14,7 @@ public:
 
     void name() override { std::cout << (getSide() == ChessSide::WHITE ? "white" : "black") << " king" << std::endl; }
 
+    std::vector<Position> getAvailableMoves(const Position &currPos, Board *board) override;
 
 private:
     MoveStatus moveStrategy(const Position &currPos, const Position &nextPos, const Board *board) override;

@@ -32,23 +32,7 @@ void Render::initFigures(const std::string &fPath) {
     updatePiecesPosition();
 }
 
-void Render::clearFigures() {
-    for (auto &it : figures) {
-        it.reset();
-    }
-}
-
-void Render::removeFigure(std::unique_ptr<sf::Sprite> *figure) {
-    figure->reset();
-}
-
-void Render::draw() {
-    sf::RectangleShape rect;
-    rect.setSize(spotSize);
-    rect.setFillColor(sf::Color::Transparent);
-    rect.setOutlineColor(sf::Color(255, 0, 0));
-    rect.setOutlineThickness(-5);
-
+void Render::run() {
     window.clear();
     window.draw(*board);
     drawInfoPanel();
@@ -56,91 +40,113 @@ void Render::draw() {
     for (auto &figure : figures) {
         window.draw(*figure);
     }
-//    renderCheckStatus(Chess::GameStatus::Default);
     window.display();
 
     //    TODO: this func requires to be refactored (a lot of code repeating and etc);
+    bool end = false;
     while (window.isOpen()) {
         sf::Vector2i mousePos = sf::Mouse::getPosition(window);
         sf::Event event;
+
         while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed || event.type == sf::Event::KeyPressed) {
+            if (event.type == sf::Event::Closed) {
                 window.close();
             }
-            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-                auto pos = toPosition(sf::Vector2f(mousePos.x, mousePos.y));
-                auto gameStatus = game->makeMove(pos);
-
-                window.clear();
-                window.draw(*board);
-                drawInfoPanel();
-                switch (gameStatus) {
-                case Chess::GameStatus::Default:
+            if (end) {
+                if (event.type == sf::Event::KeyPressed || event.type == sf::Event::MouseButtonPressed) {
+                    game->reset();
+                    end = false;
+                    window.clear();
+                    window.draw(*board);
+                    drawInfoPanel();
                     updatePiecesPosition();
+                    for (auto &figure : figures) {
+                        window.draw(*figure);
+                    }
+                    window.display();
                     break;
-
-                case Chess::GameStatus::KingCheck:
-                    drawMessageInLog("Move is forbidden because\n of king check.\nTry again!");
-                    break;
-
-                case Chess::GameStatus::InvalidMove:
-                    drawMessageInLog("Move is forbidden because\nof not valid move strategy.\nTry again!");
-                    break;
-
-                case Chess::GameStatus::Castle:
-                    drawMessageInLog("Player make king castle.");
-                    updatePiecesPosition();
-                    break;
-
-                case Chess::GameStatus::InvalidCastle:
-                    drawMessageInLog("Castle is forbidden if:\n  "
-                                     "king has made move;\n  "
-                                     "rock has made move;\n  "
-                                     "king gets checking during\nthis move.\n"
-                                     "Try again!");
-                    break;
-
-                case Chess::GameStatus::PieceAnotherPlayer:
-                    drawMessageInLog("Can't select opponent\npiece.\n"
-                                     "Try again!");
-                    break;
-
-
-                case Chess::GameStatus::PieceSelected:
-                    rect.setPosition(toVector(pos));
-                    window.draw(rect);
-                    drawPossibleMoves(pos);
-                    drawMessageInLog("Piece is selected");
-                    break;
-
-                case Chess::GameStatus::PieceUnSelected:
-                    drawMessageInLog("Piece is unselected");
-                    break;
-
-                case Chess::GameStatus::PieceNotSelected:
-                    drawMessageInLog("Any piece is not selected");
-                    break;
-
                 }
-                renderCheckStatus(game->getCheckStatus());
-                for (const auto &figure : figures) {
-                    window.draw(*figure);
+            } else {
+                if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+                    auto pos = toPosition(sf::Vector2f(mousePos.x, mousePos.y));
+                    auto gameStatus = game->makeMove(pos);
+
+                    window.clear();
+                    window.draw(*board);
+                    drawInfoPanel();
+                    switch (gameStatus) {
+                    case Chess::GameStatus::Default:
+                        updatePiecesPosition();
+                        drawInfoInLog();
+                        break;
+
+                    case Chess::GameStatus::KingCheck:
+                        drawInfoInLog("Move is forbidden because\n of king check.\nTry again!");
+                        break;
+
+                    case Chess::GameStatus::InvalidMove:
+                        drawInfoInLog("Move is forbidden because\n"
+                                      "of not valid move strategy.\n"
+                                      "Try again!");
+                        break;
+
+                    case Chess::GameStatus::Castle:
+                        drawInfoInLog("Player make king castle.");
+                        updatePiecesPosition();
+                        drawInfoInLog();
+                        break;
+
+                    case Chess::GameStatus::InvalidCastle:
+                        drawInfoInLog("Castle is forbidden if:\n  "
+                                      "king has made move;\n  "
+                                      "rock has made move;\n  "
+                                      "king gets checking during\nthis move.\n"
+                                      "Try again!");
+                        break;
+
+                    case Chess::GameStatus::PieceAnotherPlayer:
+                        drawInfoInLog("Can't select opponent\npiece.\n"
+                                      "Try again!");
+                        break;
+
+                    case Chess::GameStatus::PieceSelected:
+                        drawSelectedPieceOutline(toVector(pos));
+                        drawPossibleMoves(pos);
+                        drawInfoInLog("Piece is selected");
+                        break;
+
+                    case Chess::GameStatus::PieceUnSelected:
+                        drawInfoInLog("Piece is unselected");
+                        break;
+
+                    case Chess::GameStatus::PieceNotSelected:
+                        drawInfoInLog("Any piece is not selected");
+                        break;
+                    }
+                    auto checkStatus = game->getCheckStatus();
+                    drawCheckStatus(checkStatus);
+                    for (const auto &figure : figures) {
+                        window.draw(*figure);
+                    }
+                    if (checkStatus == Chess::GameStatus::KingCheckMate ||
+                        checkStatus == Chess::GameStatus::KingStaleMate) {
+                        drawGameOver();
+                        end = true;
+                    }
+                    window.display();
                 }
-                window.display();
             }
         }
     }
 }
 
-const std::unique_ptr<sf::Sprite> &Render::getBoard() const {
-    return board;
-}
 
-void Render::gameOver() {
-    sf::Text text("Game over", font);
+void Render::drawGameOver() {
+    sf::Text text("         Game over\n"
+                  "Tap to start new game", font);
     text.setCharacterSize(60);
     text.setFillColor(sf::Color(0, 0, 0));
-    text.setPosition(spotSize.x * 2.5, spotSize.y * 4);
+    text.setPosition(spotSize.x * 1, spotSize.y * 4);
     window.draw(text);
 }
 
@@ -155,8 +161,8 @@ sf::Vector2f Render::toVector(const Chess::Position &cords) const {
 }
 
 void Render::drawPossibleMoves(const Chess::Position &pos) {
-    const auto board = game->getBoard();
-    const auto &availablePos = board->getSpot(pos)->getPiece()->getAvailableMoves(pos, board);
+    const auto board_ = game->getBoard();
+    const auto &availablePos = board_->getSpot(pos)->getPiece()->getAvailableMoves(pos, board_);
     sf::RectangleShape possibleMove;
 
     possibleMove.setSize(spotSize);
@@ -191,7 +197,7 @@ void Render::updatePiecesPosition() {
     }
 }
 
-void Render::renderCheckStatus(const Chess::GameStatus &checkStatus) {
+void Render::drawCheckStatus(const Chess::GameStatus &checkStatus) {
     if (checkStatus != Chess::GameStatus::Default) {
         std::string str = game->getCurrPlayer().getName();
         if (checkStatus == Chess::GameStatus::KingCheck) {
@@ -218,13 +224,13 @@ void Render::drawInfoPanel() {
     auto pos = sf::Vector2f(spotSize.x * 8.f, 0);
 
     sf::RectangleShape rect;
-    rect.setSize(sf::Vector2f(spotSize.x * 4, spotSize.y * 8));
+    rect.setSize(sf::Vector2f(spotSize.x * 4.f, spotSize.y * 8.f));
     rect.setFillColor(sf::Color(255,230,190));
     rect.setPosition(pos);
     rect.setOutlineColor(sf::Color(0, 0, 0));
     rect.setOutlineThickness(-5);
     window.draw(rect);
-    rect.setSize(sf::Vector2f(spotSize.x * 4, spotSize.y));
+    rect.setSize(sf::Vector2f(spotSize.x * 4.f, spotSize.y));
     rect.setFillColor(sf::Color::Transparent);
     rect.setOutlineColor(sf::Color(0, 0, 0));
     rect.setOutlineThickness(-3);
@@ -232,19 +238,42 @@ void Render::drawInfoPanel() {
     sf::Text text(game->getCurrPlayer().getName() + " turn", font);
     text.setCharacterSize(28);
     text.setFillColor(sf::Color(0, 0, 0));
-    text.setPosition(pos.x + spotSize.x / 4, spotSize.y / 3);
+    text.setPosition(pos.x + spotSize.x / 4.f, spotSize.y / 3.f);
     window.draw(text);
     text.setString("Info log:");
-    text.setPosition(pos.x + spotSize.x / 5, spotSize.y * 1.25 );
+    text.setPosition(pos.x + spotSize.x / 5.f, spotSize.y * 1.25 );
     window.draw(text);
     text.setString("Check log:");
-    text.setPosition(pos.x + spotSize.x / 5, spotSize.y * 3.5 );
+    text.setPosition(pos.x + spotSize.x / 5.f, spotSize.y * 3.5 );
+    window.draw(text);
+    text.setString("Move log:");
+    text.setPosition(pos.x + spotSize.x / 5.f, spotSize.y * 5.75 );
     window.draw(text);
 }
-void Render::drawMessageInLog(const std::string &message) {
-    sf::Text text(message, font);
-    text.setCharacterSize(28);
-    text.setFillColor(sf::Color(0, 0, 0));
-    text.setPosition(spotSize.x * 8 + spotSize.x / 3, spotSize.y *  1.75);
-    window.draw(text);
+void Render::drawInfoInLog(const std::string &message) {
+    const auto &moveHistory = game->getMovesHistory();
+    sf::Text text("", font);
+    if (!message.empty()) {
+        text.setString(message);
+        text.setCharacterSize(28);
+        text.setFillColor(sf::Color(0, 0, 0));
+        text.setPosition(spotSize.x * 8 + spotSize.x / 3, spotSize.y *  1.75);
+        window.draw(text);
+    }
+    if (!moveHistory.empty()) {
+        text.setString(moveHistory.back());
+        text.setCharacterSize(28);
+        text.setFillColor(sf::Color(0, 0, 0));
+        text.setPosition(spotSize.x * 8 + spotSize.x / 3, spotSize.y *  6.25);
+        window.draw(text);
+    }
+}
+void Render::drawSelectedPieceOutline(sf::Vector2f pos) {
+    sf::RectangleShape rect;
+    rect.setSize(spotSize);
+    rect.setFillColor(sf::Color::Transparent);
+    rect.setOutlineColor(sf::Color(255, 0, 0));
+    rect.setOutlineThickness(-5);
+    rect.setPosition(pos);
+    window.draw(rect);
 }

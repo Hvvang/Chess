@@ -3,12 +3,11 @@
 //
 
 #include "Move.h"
-#include <iostream>
 
 namespace Chess {
 
     Move::Move(Board *board)
-        : board(board) {};
+        : board(board) {}
 
 
 //  set current piece to spot that has position = nextPos and
@@ -22,7 +21,7 @@ namespace Chess {
     }
 
     // get moveStatus for current selected piece type
-    const MoveStatus Move::getMoveStatus(const Position &currPos, const Position &nextPos) const {
+    MoveStatus Move::getMoveStatus(const Position &currPos, const Position &nextPos) const {
         return board->getSpot(currPos)->getPiece()->moveStrategy(currPos, nextPos, board);
     }
 }

@@ -22,11 +22,6 @@ namespace Chess {
     }
 
     void Board::initBoard() {
-//        for (int i = 0; i < 8; ++i) {
-//            for (int j = 0; j < 8; j++) {
-//                field[i][j] = std::make_unique<Spot>(Position(i, j));
-//            }
-//        }
         // init spots with white main pieces
         field[0][0] = std::make_unique<Spot>(Position(0, 0), new Rock(ChessSide::WHITE));
         field[0][1] = std::make_unique<Spot>(Position(0, 1), new Knight(ChessSide::WHITE));

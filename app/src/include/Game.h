@@ -38,11 +38,12 @@ namespace Chess {
         [[nodiscard]] Move *getMove() const;
 
         void setBoard(Board *board);
-        void run();
+        void reset();
         bool isCurrPlayerPiece(const Position &pos);
 
         GameStatus makeMove(const Position &toPos);
         GameStatus getCheckStatus();
+        const std::vector<std::string> &getMovesHistory() const;
 
     private:
         bool isCheckmate();
@@ -57,7 +58,9 @@ namespace Chess {
         Spot *currPieceSpot = nullptr;
         Board *board;
         Move *move;
-        std::vector<std::pair<Position, Position>> movesHistory;
+        std::vector<std::string> movesHistory;
+
+
     };
 }
 

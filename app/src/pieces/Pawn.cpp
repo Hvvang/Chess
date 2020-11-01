@@ -12,8 +12,8 @@ namespace Chess {
     MoveStatus Pawn::moveStrategy(const Position &currPos, const Position &nextPos, const Board *board) {
 //      deltaX - movement`s offset by Y coordinate
 //      deltaY - movement`s offset by X coordinate
-        auto deltaX = nextPos.second - currPos.second;
         auto deltaY = nextPos.first - currPos.first;
+        auto deltaX = nextPos.second - currPos.second;
 
 //      disable movement if offset more than:
 //          2 spots forward or backward,
@@ -42,6 +42,7 @@ namespace Chess {
         } else return MoveStatus::NotValid;
     }
 
+//  check collision with other pieces
     MoveStatus Pawn::checkCollision(const Position &currPos, const Position &nextPos, const Board *board) {
         auto collision = Piece::checkCollision(currPos, nextPos, board);
         if (collision != MoveStatus::NotValid) {
@@ -51,9 +52,7 @@ namespace Chess {
             auto nextPiece = board->getSpot(nextPos)->getPiece();
 
             if (abs(deltaX) == abs(deltaY) == 1) {
-                if (!nextPiece)
-                    return MoveStatus::NotValid;
-                else if (nextPiece && nextPiece->getSide() == currPiece->getSide())
+                if (!nextPiece || nextPiece->getSide() == currPiece->getSide())
                     return MoveStatus::NotValid;
                 else return MoveStatus::KillMove;
             }

@@ -5,12 +5,11 @@
 
 int main() {
     sf::RenderWindow window(sf::VideoMode(1200, 800), "Chess");
-
-    Render *r = new Render(window);
+    auto *r = new Render(window);
 
     r->initBoard("./board.png");
     r->initFigures("./figures.png");
+    r->run();
 
-    r->draw();
     return 0;
 }

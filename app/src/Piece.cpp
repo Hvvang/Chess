@@ -11,11 +11,11 @@ namespace Chess {
 
     Piece::Piece(const ChessSide &side, const Types &type)
             : side(side)
-            , type(type) {};
+            , type(type) {}
 
     const ChessSide &Piece::getSide() const {
         return side;
-    };
+    }
 
 
     Position Piece::getDirection(const int &deltaX, const int &deltaY) {
@@ -43,9 +43,7 @@ namespace Chess {
             const auto &piece = board->getSpot(temp)->getPiece();
 
             if (piece) {
-                if (temp != nextPos)
-                    return MoveStatus::NotValid;
-                else if (this->getSide() == piece->getSide())
+                if (temp != nextPos || getSide() == piece->getSide())
                     return MoveStatus::NotValid;
                 else return MoveStatus::KillMove;
             }

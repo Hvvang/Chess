@@ -18,27 +18,21 @@ public:
     void initBoard(const std::string &fPath);
     void initFigures(const std::string &fPath);
 
-    void gameOver();
-    void draw();
+    void run();
 
-    void renderCheckStatus(const Chess::GameStatus &checkStatus);
-
+private:
     void updatePiecesPosition();
-    void drawInfoPanel();
-    void drawMessageInLog(const std::string &message);
-    void drawPossibleMoves(const Chess::Position &pos);
 
-    void clearFigures();
-    void removeFigure(std::unique_ptr<sf::Sprite> *figure);
+    void drawInfoPanel();
+    void drawInfoInLog(const std::string &message = "");
+    void drawSelectedPieceOutline(sf::Vector2f pos);
+    void drawPossibleMoves(const Chess::Position &pos);
+    void drawCheckStatus(const Chess::GameStatus &checkStatus);
+    void drawGameOver();
+
 
     Chess::Position toPosition(const sf::Vector2f &cords) const;
     sf::Vector2f toVector(const Chess::Position &cords) const;
-
-    [[nodiscard]] const std::unique_ptr<sf::Sprite> &getBoard() const;
-
-//private:
-//    void takePiece(std::unique_ptr<sf::Sprite> *figure);
-//    void movePiece(std::unique_ptr<sf::Sprite> *figure);
 
 private:
     sf::Font font;
