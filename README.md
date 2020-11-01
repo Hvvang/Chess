@@ -24,9 +24,8 @@ Implementation of classic Chess game written on C++
 
 ## Installation
 >**1) git clone --recursive [`https://github.com/Hvvang/Chess.git`](https://github.com/Hvvang/Chess.git)**  
->**2) `cd Chess`**  
->**3) `cmake . -Bbuild && cmake --build ./build`**
->**4) `cd build/app && ./chess`**
+>**2) `cd Chess && cmake . -Bbuild && cmake --build ./build`**  
+>**3) `cd build/app && ./chess`**
 
 ## Tested Systems:
 - macOS Catalina `v10.15.7`;
