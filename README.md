@@ -17,6 +17,7 @@ Implementation of classic Chess game written on C++
 ![](preview.gif)
 
 ## Required software:
+  - `git`;
   - any `C++ compiler` supported `17 standard` and higher;
   - `make`;
   - `cmake` `v3.17` and higher.
