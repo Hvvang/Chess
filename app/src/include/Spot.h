@@ -19,7 +19,6 @@ namespace Chess {
         [[nodiscard]] const Position &getPos() const;
         [[nodiscard]] Piece *getPiece() const;
         void setPiece(Piece *piece);
-        void pawnPromotion();
 
     private:
         const Position pos;

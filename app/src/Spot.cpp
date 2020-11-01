@@ -26,9 +26,4 @@ namespace Chess {
     void Spot::setPiece(Piece *piece) {
         Spot::piece = piece;
     }
-
-    void Spot::pawnPromotion() {
-        delete piece;
-        piece = new Queen(piece->getSide());
-    }
 }
