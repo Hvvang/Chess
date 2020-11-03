@@ -72,8 +72,8 @@ void Render::run() {
                     break;
                 }
             } else {
-                if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-                    auto pos = toPosition(sf::Vector2f(mousePos.x, mousePos.y));
+                if (auto pos = toPosition(sf::Vector2f(mousePos.x, mousePos.y)); pos.first < 8 && pos.second < 8
+                    && event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
                     auto gameStatus = game->makeMove(pos);
 
                     window.clear();
